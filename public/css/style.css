@@ -1,0 +1,138 @@
+/*================================================================================
+	Item Name: Modern Admin - Clean Bootstrap 4 Dashboard HTML Template
+	Author: PIXINVENT
+	Author URL: http://www.themeforest.net/user/pixinvent
+================================================================================
+
+NOTE:
+------
+PLACE HERE YOUR OWN SCSS CODES AND IF NEEDED, OVERRIDE THE STYLES FROM THE OTHER STYLESHEETS.
+WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BETTER LIKE THIS.  */
+
+#map .maps-center-marker {
+  position: absolute !important;
+  background: url(http://maps.gstatic.com/mapfiles/markers2/marker.png)
+    no-repeat;
+  top: 50%;
+  left: 50%;
+  z-index: 400;
+  margin-left: -10px;
+  margin-top: -34px;
+  height: 34px;
+  width: 20px;
+  cursor: pointer;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.header-profile-attendance {
+  background-color: #f6f6f6;
+}
+
+.header-profile-attendance .h4 {
+  margin-left: 25px;
+}
+
+.ft-clock {
+  font-size: 15px;
+}
+
+.badge-success-light {
+  color: #00e090;
+  font-weight: bold;
+  background-color: #d5f6ea;
+}
+
+.badge-danger-light {
+  color: #ff4961;
+  font-weight: bold;
+  background-color: #ffe0e4;
+}
+
+.badge-secondary-light {
+  color: #4c4e5a;
+  font-weight: bold;
+  background-color: #d0d1d4;
+}
+
+.badge.badge-pill.status-label.active,
+.badge.badge-pill.status-label.approved {
+  color: #ffff;
+  font-weight: bold;
+  background-color: #00e090;
+}
+
+.badge.badge-pill.status-label.draft {
+  color: #ffff;
+  font-weight: bold;
+  background-color: #1e9ff2;
+}
+
+.badge.badge-pill.status-label.cancelled {
+  color: #ffff;
+  font-weight: bold;
+  background-color: #ff4961;
+}
+
+.royal-navy .calendar-sidebar {
+  background-image: linear-gradient(#424e58, #343d45);
+}
+
+.royal-navy .calendar-sidebar > .month-list > .calendar-months > li {
+  border-radius: 0 !important;
+}
+
+.royal-navy .calendar-sidebar > .month-list > .calendar-months {
+  padding: 0 !important;
+}
+
+.royal-navy
+  .calendar-sidebar
+  > .month-list
+  > .calendar-months
+  > li.active-month {
+  background-color: #53616d !important;
+}
+
+#calendar,
+.calendar-inner {
+  height: 50rem;
+}
+
+.event-container > .event-icon > div.event-bullet-event,
+.event-indicator > .type-bullet > div.type-event {
+  background-color: #00e090 !important;
+}
+
+.royal-navy .calendar-events {
+  background-color: #fbfbfb !important;
+}
+
+.event-header p {
+  color: #216583 !important;
+  text-transform: capitalize !important;
+}
+
+.event-title,
+.event-desc {
+  color: #216583 !important;
+  font-style: normal !important;
+}
+
+.event-desc {
+  font-size: 20px !important;
+}
+
+.event-container > .event-ico {
+  padding: 22px !important;
+}
+
+.ellipsis-text {
+  display: -webkit-box;
+  white-space: normal;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
