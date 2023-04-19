@@ -12,6 +12,7 @@
             </div>
         </div>
         <div class="card-body">
+            <input type="hidden" name="id" value="">
             <div class="form-group row">
                 <label for="kategori" class="col-form-label col-md-2 col-sm-4">
                     Kategori
@@ -96,7 +97,7 @@
                                                 </div>
                                             </div>
                                             <div class="ml-1">
-                                                <textarea cols="100" class="form-control" name="options[0][0]" placeholder="Tambah Jawaban"></textarea>
+                                                <textarea cols="100" class="form-control" name="options[0][0]" placeholder="Jawaban"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -108,7 +109,9 @@
                 </div>
                 <div class="row">
                     <div class="col-12 text-right">
-                        <button type="button" data-index="0" class="btn btn-success btn-raised add-option">Tambah Jawaban</button>
+                        <button type="button" data-index="0" class="btn btn-glow btn-warning round btn-raised add-option">
+                            <i class="la la-plus"></i> Tambah
+                        </button>
                     </div>
                 </div>
             </div>

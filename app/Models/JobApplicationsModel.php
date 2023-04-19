@@ -7,13 +7,17 @@ class JobApplicationsModel extends Model
 {
     protected $table            = 'lamaran';
     protected $returnType       = 'object';
-    protected $useSoftDeletes   = false;
-    protected $useTimestamps    = false;
+    protected $useTimestamps    = true;
     protected $allowedFields    = [
         'id_pelamar',
         'id_lowongan',
-        'id_psikotest',
+        'respond_input',
+        'lolos_administrasi',
+        'waktu_psikotest',
+        'jumlah_soal_benar',
         'nilai_psikotest',
+        'id_interview',
+        'nilai_interview',
         'berpengalaman',
         'lama_pengalaman',
         'pas_photo',

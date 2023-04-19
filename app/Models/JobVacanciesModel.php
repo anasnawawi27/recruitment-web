@@ -12,9 +12,10 @@ class JobVacanciesModel extends Model
     protected $allowedFields    = [
         'gambar',
         'posisi',
+        'deskripsi',
+        'batas_tanggal',
         'qualifikasi',
-        'tanggal_expired',
-        'tampil',
+        'id_interview',
         'created_by',
         'updated_by',
         'deleted_by'

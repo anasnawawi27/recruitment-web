@@ -177,6 +177,12 @@
 			</a>
 		</li>
 		<?php if(logged_in()) : ?>
+			<li class="dropdown nav-item <?= $menu == 'applications' ? 'active' : ''?>">
+			<a class="dropdown-toggle nav-link" href="<?= route_to('job_applications') ?>">
+				<i class="la la-briefcase"></i>
+				<span data-i18n="Lamaran Kerja">Lamaran Kerja</span>
+			</a>
+		</li>
 	  	<?php endif ?>
 	</ul>
   </div>
@@ -187,14 +193,16 @@
   <div class="content-wrapper">
 	  <div class="content-header row">
 		<div class="content-header-left col-md-6 col-12 mb-2">
-		  <h3 class="content-header-title"><?= $heading ?></h3>
-		  <?php if(isset($breadcrumb)) : ?>
-			<div class="row breadcrumbs-top">
-				<div class="breadcrumb-wrapper col-12">
-					<?php echo isset($breadcrumb) ? $breadcrumb : ''; ?>
+			<?php if(isset($heading)) : ?>
+				<h3 class="content-header-title"><?= $heading ?></h3>
+			<?php endif ?>
+			<?php if(isset($breadcrumb)) : ?>
+				<div class="row breadcrumbs-top">
+					<div class="breadcrumb-wrapper col-12">
+						<?php echo isset($breadcrumb) ? $breadcrumb : ''; ?>
+					</div>
 				</div>
-			</div>
-		  <?php endif ?>
+			<?php endif ?>
 		</div>
 	  </div>
 	  <div class="content-body">

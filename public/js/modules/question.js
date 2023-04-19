@@ -40,7 +40,7 @@ $("body").on("click", ".add-option", function () {
                                                 </div>
                                             </div>
                                             <div class="ml-1">
-                                                <textarea cols="100" name="options[${index}][${optionLength}]" class="form-control" placeholder="Tambah Jawaban"></textarea>
+                                                <textarea cols="100" name="options[${index}][${optionLength}]" class="form-control" placeholder="Jawaban"></textarea>
                                             </div>
                                         </div>
                                         <a href="javascript:void(0)" class="text-danger ml-2 delete-option" data-index="${index}" data-length="${optionLength}">
@@ -53,7 +53,6 @@ $("body").on("click", ".add-option", function () {
                         </div>
                     </div>`;
   $(".opsi-" + index).append(content);
-  indexOption++;
 });
 
 $(".add-question").on("click", function () {
@@ -129,7 +128,7 @@ $(".add-question").on("click", function () {
                                                             </div>
                                                         </div>
                                                         <div class="ml-1">
-                                                            <textarea cols="100" name="options[${indexQuestion}][0]" class="form-control" placeholder="Tambah Jawaban"></textarea>
+                                                            <textarea cols="100" name="options[${indexQuestion}][0]" class="form-control" placeholder="Jawaban"></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -140,7 +139,9 @@ $(".add-question").on("click", function () {
                             </div>
                             <div class="row">
                                 <div class="col-12 text-right">
-                                    <button type="button" data-index="${indexQuestion}" class="btn btn-success btn-raised add-option">Tambah Jawaban</button>
+                                    <button type="button" data-index="${indexQuestion}" class="btn btn-glow btn-warning round btn-raised add-option">
+                                        <i class="la la-plus"></i> Tambah
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -172,9 +173,8 @@ $(".save").on("click", function () {
   startLoading();
   $("#form-question").ajaxSubmit({
     success: function (data) {
-      console.log(JSON.parse(data));
-      //   stopLoading();
-      //   responseForm(data);
+      stopLoading();
+      responseForm(data);
     },
   });
 });

@@ -1,7 +1,9 @@
 <?php $this->extend('layout/default2') ?>
 <?php $this->section('content')?>
 <div class="row">
-    <?php if($data && $data->tampil == '1') : ?>
+    <?php
+    $current_date = date('Y-m-d');
+    if($current_date <= $data->batas_tanggal) : ?>
             <div class="col-12">
                 <div class="card">
                     <?php
@@ -13,7 +15,7 @@
                             <p>We Are Hiring !</p>
                             <h4 class="font-weight-bold mb-0"><?= $data->posisi ?></h4>
                             <hr>
-                            <?= $data->qualifikasi ?>
+                            <?= $data->deskripsi ?>
                             <div class="d-flex">
                                 <a href="<?= base_url('vacancy/apply/' . $data->id) ?>" class="btn btn-info btn-icon mr-1 btn-block">
                                     <i class="la la-file-text"></i>    

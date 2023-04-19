@@ -150,7 +150,17 @@ class JobVacancies extends BaseController
 
         $this->data['title'] = ($data ? lang('Common.edit') : lang('Common.add')) . ' ' . lang('JobVacancies.heading');
         $this->data['heading'] = $this->data['title'];
-        return view('form', $this->data);
+
+        $db = db_connect();
+        $builder = $db->table('kategori_soal a');
+        $builder->select('a.*');
+        // $builder = $db->table('soal a');
+        // $builder->select('a.*, b.kategori');
+        // $builder->join('kategori_soal b', 'a.id_kategori = b.id', 'left');
+        // $builder->groupBy('a.id_kategori');
+        $this->data['kategori_soal'] = $builder->get()->getResult();
+
+        return view('form_vacancy', $this->data);
     }
 
     public function get_list(){
@@ -178,6 +188,7 @@ class JobVacancies extends BaseController
 
     public function save(){
         $this->request->isAJAX() or exit();
+
         $rules = [
             'posisi'         => [
                 'label' => lang('JobVacancies.position'),
@@ -186,11 +197,18 @@ class JobVacancies extends BaseController
                     'required' => 'Posisi wajib diisi'
                 ]
             ],
-            'qualifikasi' => [
-                'label' => lang('JobVacancies.qualification'),
+            'deskripsi' => [
+                'label' => lang('JobVacancies.description'),
                 'rules' => 'required',
                 'errors' => [
-                    'required' => 'Kualifikasi wajib diisi'
+                    'required' => 'Deskripsi wajib diisi'
+                ]
+            ],
+            'batas_tanggal' => [
+                'label' => lang('JobVacancies.date_required'),
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'Batas Tanggal wajib diisi'
                 ]
             ]
         ];
@@ -202,40 +220,100 @@ class JobVacancies extends BaseController
                 $return['message'] = $this->validator->listErrors('bootstrap_list');
                 break;
             }
-            $postData = input_filter($this->request->getPost());
-            $postData['qualifikasi'] = nl2br($postData['qualifikasi']);
+            $postData = $this->request->getPost();
+
+            $lowongan = [
+                'posisi'        => $postData['posisi'],
+                'deskripsi'     => nl2br($postData['deskripsi']),
+                'batas_tanggal' => $postData['batas_tanggal'],
+            ];
             
             $image = $this->request->getFile('upload_image');
             $cld = new UploadApi();
             if ($image) {
                 if ($image->isValid()) {
                     $upload = $cld->upload($image->getRealPath(), ['folder' => 'pt-tekpak-indonesia/vacancy']);
-                    $postData['gambar'] = $upload['public_id'];
+                    $lowongan['gambar'] = $upload['public_id'];
                 }
             } else {
                 if (isset($postData['id'])) {
                     if ($image = $this->model->find($postData['id'])) {
                         if ($image->gambar) {
-                            $postData['gambar'] = $image->gambar;
+                            $lowongan['gambar'] = $image->gambar;
                             if (isset($postData['delete_image']) && $postData['delete_image'] === '1') {
                                 $cld->destroy($image->gambar);
-                                $postData['gambar'] = NULL;
+                                $lowongan['gambar'] = NULL;
                             }
                         }
                     }
                 }
             }
 
-            if(!isset($postData['tampil'])){
-                $postData['tampil'] = 0;
+            if(isset($postData['set_interview']) && $postData['set_interview'] == 1){
+                $interview = [
+                    'waktu'         => str_replace('T', ' ', $postData['waktu_interview']) . ':00',
+                    'pewawancara'   => $postData['pewawancara'],
+                    'konten_email' => nl2br( $postData['konten_email'])
+                ];
             }
 
+            $psikotest = [
+                'kategori_soal_ids' => json_encode($postData['kategori_soal']),
+                'waktu_pengerjaan'  =>  $postData['waktu_pengerjaan'],
+                'point_persoal'     => $postData['nilai_persoal'],
+                'nilai_minimum'     => $postData['nilai_minimum']
+            ];
+
+            $interviewModel = new \App\Models\InterviewModel();
+            $psikotestModel = new \App\Models\PsikotestModel();
+
+            $qualifikasi = [];
+            if($postData['last_education']){
+                $qualifikasi['last_education'] = $postData['last_education'];
+            }
+
+            if($postData['syarat_jurusan'] == 'jurusan_spesifik'){
+                $jurusan = explode(',', $postData['jurusan']);
+                $qualifikasi['syarat_jurusan'] = json_encode($jurusan);
+            }
+
+            if($postData['minimum_nilai'] == 'ya'){
+                $qualifikasi['minimum_nilai'] = $postData['syarat_nilai'];
+            }
+
+            if($postData['kriteria'] == 'Berpengalaman'){
+                $qualifikasi['berpengalaman'] = true;
+                $qualifikasi['minimum_pengalaman'] = $postData['minimum_pengalaman'];
+            }
+
+            $lowongan['qualifikasi'] = json_encode($qualifikasi);
+
+
             if (!$postData['id']) {
-                $postData['created_by'] = user_id();
-                $this->model->insert($postData);
+                if(isset($postData['set_interview'])){
+                    $interviewModel->insert($interview);
+                    $lowongan['id_interview'] =  $interviewModel->getInsertID();
+                } else {
+                    $lowongan['id_interview'] = NULL;
+                }
+
+                $lowongan['created_by'] = user_id();
+                $this->model->insert($lowongan);
+                $id_lowongan =  $this->model->getInsertID();
+
+                $psikotest['id_lowongan'] = $id_lowongan;
+                $psikotestModel->insert($psikotest);
+
             } else {
                 $postData['updated_by'] = user_id();
                 $this->model->update($postData['id'], $postData);
+                
+                if(isset($postData['set_interview'])){
+                    $interview['id_lowongan'] = $insertId;
+                    $interviewModel->insert($interview);
+                } else {
+                    $interviewModel->where('id_lowongan', $insertId)->delete();
+                }
             }
 
             $return = [

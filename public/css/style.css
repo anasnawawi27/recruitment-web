@@ -39,19 +39,31 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
   font-size: 15px;
 }
 
-.badge-success-light {
+.badge-status {
+  padding: 5px 10px;
+  border-radius: 100px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  display: inline-block;
+}
+
+.badge-success-light,
+.accepted {
   color: #00e090;
   font-weight: bold;
   background-color: #d5f6ea;
 }
 
-.badge-danger-light {
+.badge-danger-light,
+.failed_interview,
+.failed_psikotest {
   color: #ff4961;
   font-weight: bold;
   background-color: #ffe0e4;
 }
 
-.badge-secondary-light {
+.badge-secondary-light,
+.applied {
   color: #4c4e5a;
   font-weight: bold;
   background-color: #d0d1d4;
@@ -64,10 +76,11 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
   background-color: #00e090;
 }
 
-.badge.badge-pill.status-label.draft {
-  color: #ffff;
+.badge.badge-pill.status-label.draft,
+.interview {
+  color: #26acff;
   font-weight: bold;
-  background-color: #1e9ff2;
+  background-color: #d8eaf5;
 }
 
 .badge.badge-pill.status-label.cancelled {

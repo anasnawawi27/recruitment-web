@@ -3,7 +3,9 @@
 <div class="row">
     <?php if($vacancies) : ?>
         <?php foreach($vacancies as $vacancy) : ?>
-            <?php if($vacancy->tampil == '1') : ?>
+            <?php
+                $current_date = date('Y-m-d');
+                if($current_date <= $vacancy->batas_tanggal) : ?>
                 <div class="col-12 col-md-4">
                     <a href="<?= base_url('vacancy/detail/' . $vacancy->id) ?>">
                         <div class="card">
@@ -16,7 +18,7 @@
                             <div class="card-body text-secondary">
                                 <h4 class="font-weight-bold mb-1"><?= $vacancy->posisi ?></h4>
                                 <div class="ellipsis-text">
-                                    <p><?= strip_tags($vacancy->qualifikasi) ?></p>
+                                    <p><?= strip_tags($vacancy->deskripsi) ?></p>
                                 </div>
                             </div>
                         </div>

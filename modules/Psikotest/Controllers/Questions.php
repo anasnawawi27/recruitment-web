@@ -2,7 +2,7 @@
 
 namespace Modules\Psikotest\Controllers;
 use \App\Controllers\BaseController;
-use \App\Models\QuestionTypesModel;
+use \App\Models\QuestionsModel;
 use Cloudinary\Cloudinary;
 use Cloudinary\Api\Upload\UploadApi;
 
@@ -20,9 +20,9 @@ class Questions extends BaseController
         $this->perm = 'question';
         $this->data['menu'] = 'question';
         $this->data['module'] = 'psikotest';
-        $this->data['module_url'] = route_to('question_types');
-        $this->data['filter_name'] = 'table_filter_question_type';
-        $this->model = new QuestionTypesModel();
+        $this->data['module_url'] = route_to('questions');
+        $this->data['filter_name'] = 'table_filter_question';
+        $this->model = new QuestionsModel();
         $this->permView = has_permission($this->perm);
         $this->permAdd = has_permission($this->perm. '/add');
         $this->permEdit = has_permission($this->perm. '/edit');
@@ -36,6 +36,12 @@ class Questions extends BaseController
                 [
                     'title'         => lang('QuestionTypes.category'),
                     'field'         => 'kategori',
+                    'sortable'      => 'true',
+                    'switchable'    => 'true',
+                ],
+                [
+                    'title'         => lang('Questions.number_question'),
+                    'field'         => 'jumlah_soal',
                     'sortable'      => 'true',
                     'switchable'    => 'true',
                 ],
@@ -57,10 +63,10 @@ class Questions extends BaseController
 
         $breadcrumb = $this->_setDefaultBreadcrumb();
         $this->data['breadcrumb'] = $breadcrumb->render();
-        $this->data['title'] = lang('QuestionTypes.heading');
-        $this->data['heading'] = lang('QuestionTypes.heading');
+        $this->data['title'] = lang('Questions.heading');
+        $this->data['heading'] = lang('Questions.heading');
         if($this->permAdd){
-            $this->data['left_toolbar'] = sprintf(lang('Common.btn.add'), route_to('question_form',0), lang('QuestionTypes.add_heading'));
+            $this->data['left_toolbar'] = sprintf(lang('Common.btn.add'), route_to('question_form',0), lang('Questions.add_heading'));
         }
         $this->data['toolbar'] = view('table-toolbar/default', $this->data);
         return view('list', $this->data);
@@ -134,7 +140,7 @@ class Questions extends BaseController
         $table->setLimit($getData['offset'], $getData['limit']);
         $table->setFilter($filter);
         // $table->withUser();
-        $table->setSelect("a.id, a.kategori, '".($this->permEdit ? route_to('question_form', 'ID') : '')."' AS `edit`, '".($this->permDelete ? route_to('question_delete', 'ID') : '')."' AS `delete`");
+        $table->setSelect("a.id, a.kategori, (SELECT COUNT(id) FROM soal WHERE id_kategori = a.id ) as jumlah_soal, '".($this->permEdit ? route_to('question_form', 'ID') : '')."' AS `edit`, '".($this->permDelete ? route_to('question_delete', 'ID') : '')."' AS `delete`");
         $output['rows'] = $table->getAll();
         $output['total'] = $table->countAll();
         $table->setFilter();
@@ -148,44 +154,52 @@ class Questions extends BaseController
 
         do {
             $postData = $this->request->getPost();
-            $image_questions = $this->request->getFile('image_questions');
+            $files = $this->request->getFiles();
+
+            $options = $postData['options'];
             $questions = $postData['questions'];
-
-            $options = [];
-
+            
             foreach($questions as $key => $question){
+                $payload = [
+                    'id_kategori' => $postData['id_kategori'],
+                    'pertanyaan'  => $question,
+                    'jawaban'     => $postData['answers'][$key]
+                ];
 
-            }
-            $cld = new UploadApi();
-            foreach($image_questions  as $key => $image_question){
                 $cld = new UploadApi();
-                if ($image_question) {
+                if (isset($files['image_questions'][$key])) {
+                    $image_question = $files['image_questions'][$key];
                     if ($image_question->isValid()) {
-                        $upload = $cld->upload($file->getRealPath(), ['folder' => 'pt-tekpak-indonesia/' . $key]);
-                        if($key == 'ktp' || $key == 'file_vaksin_1' | $key == 'file_vaksin_2' | $key == 'file_vaksin_3'){
-                            $documents[$key] = $upload['secure_url'];
-                        } else {
-                            $postData[$key] = $upload['secure_url'];
+                        $upload = $cld->upload($image_question->getRealPath(), ['folder' => 'pt-tekpak-indonesia/soal/gambar_soal']);
+                        $payload['gambar'] = $upload['public_id'];
+                    }
+                }
+
+                $opsi = [];
+                $data = [];
+                foreach($options[$key] as $index => $option){
+                    $data['opsi'] = $option;
+
+                    if (isset($files['image_options'][$key][$index])) {
+                        $image_option = $files['image_options'][$key][$index];
+                        if ($image_option->isValid()) {
+                            $upload = $cld->upload($image_option->getRealPath(), ['folder' => 'pt-tekpak-indonesia/soal/gambar_pilihan']);
+                            $data['gambar_id'] = $upload['public_id'];
                         }
                     }
+                    $opsi[] = $data;
+                }
+                $payload['options'] = json_encode($opsi);
+
+                if (!$postData['id']) {
+                    $this->model->insert($payload);
+                } else {
+                    $this->model->update($postData['id'], $payload);
                 }
             }
 
-            $payload = [
-                'id_kategori' => $postData['id_kategori'],
-                ''
-            ];
-
-            if (!$postData['id']) {
-                $postData['created_by'] = user_id();
-                $this->model->insert($postData);
-            } else {
-                $postData['updated_by'] = user_id();
-                $this->model->update($postData['id'], $postData);
-            }
-
             $return = [
-                'message'  =>sprintf(lang('Common.saved.success'), lang('Questions.heading') . ' ' . $postData['kategori']),
+                'message'  =>sprintf(lang('Common.saved.success'), lang('Questions.heading')),
                 'status'   => 'success',
                 'redirect' => route_to('questions')
             ];
@@ -194,7 +208,7 @@ class Questions extends BaseController
             $this->session->setFlashdata('form_response_status', $return['status']);
             $this->session->setFlashdata('form_response_message', $return['message']);
         }
-        echo json_encode($output);
+        echo json_encode($return);
     }
 
     public function delete($id)

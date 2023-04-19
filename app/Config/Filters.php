@@ -40,7 +40,7 @@ class Filters extends BaseConfig
             // 'csrf',
             // 'invalidchars',
             'login' => [
-                'except' => ['/', '/vacancy', '/vacancy/detail/*']
+                'except' => ['/', '/vacancy', '/vacancy/detail/*', '/vacancy/not-qualified']
             ]
         ],
         'after' => [

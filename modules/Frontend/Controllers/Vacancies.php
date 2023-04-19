@@ -46,7 +46,121 @@ class Vacancies extends BaseController
         return view('Modules\Frontend\Views\Vacancies\detail', $this->data);
     }
 
+    public function not_qualified(){
+        $this->data['title'] = 'Not Qualified';
+        return view('Modules\Frontend\Views\Vacancies\not_qualified', $this->data);
+    }
+
     public function apply($id){
+
+        if($this->request->isAJAX()){
+            $postData = $this->request->getPost();
+            $return['status'] = 'error';
+
+            do {
+
+                $data = $this->model->find($id);
+                $qualifikasi = json_decode($data->qualifikasi, true);
+                $experienced = 0;
+
+                $respond = [
+                    'last_education' => $postData['last_education'],
+                    'jurusan'        => $postData['jurusan'],
+                    'nilai_terakhir' => $postData['nilai_terakhir'],
+                    'berpengalaman'  => ($postData['berpengalaman'] == 'yes' ? true : false)
+                ];
+
+                if($postData['jurusan'] == 'other'){
+                    $respond['jurusan'] = $postData['jurusan_lain'];
+                }
+
+                if(isset($postData['lama_pengalaman'])){
+                    $respond['lama_pengalaman'] = $postData['lama_pengalaman'];
+                }
+
+                $not_passed = [];
+                if($postData['last_education'] < $qualifikasi['last_education']){
+                    $not_passed[] = false;
+                }
+
+                if (array_key_exists('syarat_jurusan', $qualifikasi)) {
+                    if($postData['jurusan'] == 'other'){
+                        $not_passed[] = false;
+                    }
+                }
+
+                if (array_key_exists('nilai_minimum', $qualifikasi)) {
+                    if($postData['nilai_terakhir'] < $qualifikasi['nilai_minimum']){
+                        $not_passed[] = false;
+                    }
+                }
+
+                if (array_key_exists('berpengalaman', $qualifikasi)) {
+                    
+                    if($postData['berpengalaman'] !== 'yes'){
+                        $not_passed[] = false;
+                    } else {
+                        $experienced = 1;
+                    }
+
+                    if($postData['lama_pengalaman'] < $qualifikasi['minimum_pengalaman']){
+                        $not_passed[] = false;
+                    }
+                }
+
+                $passed = count($not_passed) > 0 ? false : true;
+                if(!$passed){
+                    $return = [
+                        'status'   => 'not_passed',
+                        'redirect' => route_to('not_qualified')
+                    ];
+
+                    break;
+                }
+
+                $payload = [
+                    'id_pelamar'         => $this->session->get('id_pelamar'),
+                    'id_lowongan'        => $id,
+                    'respond_input'      => json_encode($respond),
+                    'lolos_administrasi' => 1,
+                    'id_interview'       => $data->id_interview,
+                    'berpengalaman'      => $experienced,
+                    'lama_pengalaman'    => isset($postData['lama_pengalaman']) ? $postData['lama_pengalaman'] : NULL,
+                    'status'             => 'passed',
+                ];
+                
+                $jobApplicationModel = new \App\Models\JobApplicationsModel();
+                $jobApplicationModel->insert($payload);
+
+                $return = [
+                    'status'   => 'success',
+                    'redirect' => base_url('vacancy/complete-data/' . $id)
+                ];
+            } while (0);
+            echo json_encode($return);
+
+        } else {
+
+            $this->data['title'] = lang('JobVacancies.apply');
+            $data = $this->model->find($id);
+            if(!$data){
+                throw \Codeigniter\Exceptions\PageNotFoundException::forPageNotFound();
+            }
+            $this->data['data'] = $data;
+
+            $jobApplicationModel = new \App\Models\JobApplicationsModel();
+            $applied = $jobApplicationModel->where(['id_lowongan' => $id, 'id_pelamar' => $this->session->get('id_pelamar')])->first();
+
+            if($applied){
+                return redirect()->to('job-application/detail/' . $applied->id);
+            } else {
+                return view('Modules\Frontend\Views\Vacancies\apply', $this->data);
+            }
+
+        }
+    }
+
+    public function complete_data($id){
 
         if($this->request->isAJAX()){
             $postData = $this->request->getPost();
@@ -56,43 +170,35 @@ class Vacancies extends BaseController
             $return['status'] = 'error';
 
             do {
+
+                $payload = [];
                 foreach($files as $key => $file){
                     $cld = new UploadApi();
                     if ($file) {
                         if ($file->isValid()) {
                             $upload = $cld->upload($file->getRealPath(), ['folder' => 'pt-tekpak-indonesia/' . $key]);
                             if($key == 'ktp' || $key == 'file_vaksin_1' | $key == 'file_vaksin_2' | $key == 'file_vaksin_3'){
-                                $documents[$key] = $upload['secure_url'];
+                                $documents[$key] = $upload['public_id'];
                             } else {
-                                $postData[$key] = $upload['secure_url'];
+                                $payload[$key] = $upload['public_id'];
                             }
                         }
                     }
                 }
     
-                if($postData['berpengalaman'] == 'no'){
-                    $postData['berpengalaman'] = 0;
-                    $postData['lama_pengalaman'] = NULL;
-                } else {
-                    $postData['berpengalaman'] = 1;
-                }
-                $postData['status'] = 'applied';
-                $postData['id_pelamar'] = $this->session->get('id_pelamar');
-                $postData['id_lowongan'] = $id;
+                $id_pelamar = $this->session->get('id_pelamar');
+                $payload['status'] = 'applied';
                 
                 $jobApplicationModel = new \App\Models\JobApplicationsModel();
-                $jobApplicationModel->insert($postData);
+                $jobApplicationModel->where(['id_lowongan' => $id, 'id_pelamar' => $id_pelamar])->set($payload)->update();
 
                 if(count($documents) > 0){
                     $documents['tanggal_vaksin_1'] = $postData['tanggal_vaksin_1'];
                     $documents['tanggal_vaksin_2'] = $postData['tanggal_vaksin_2'];
                     $documents['tanggal_vaksin_3'] = $postData['tanggal_vaksin_1'];
                     
-                    $userModel = new \App\Models\UsersModel();
-                    $recruiter = $userModel->select('b.id pelamar_id')->from('users a')->join('pelamar b', 'a.id = b.id_user', 'left')->find(user_id());
-                    
                     $recruiterModel = new \App\Models\RecruitersModel();
-                    $recruiterModel->update($recruiter->pelamar_id, $documents);
+                    $recruiterModel->update($id_pelamar, $documents);
                 }
 
                 $return = [
@@ -110,46 +216,16 @@ class Vacancies extends BaseController
         } else {
 
             $this->data['title'] = lang('JobVacancies.apply');
-            $this->data['heading'] = lang('JobVacancies.personal_data');;
-            $data = $this->model->find($id);
+
+            $jobApplicationModel = new \App\Models\JobApplicationsModel();
+
+            $data =  $jobApplicationModel->where(['id_lowongan' => $id, 'id_pelamar' => $this->session->get('id_pelamar'), 'status' => 'passed'])->find();
             if(!$data){
-                throw \Codeigniter\Exceptions\PageNotFoundException::forPageNotFound();
+                throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
             }
-            $breadcrumb = $this->_setDefaultBreadcrumb();
-            $breadcrumb->add($data->posisi, base_url('vacancy/detail/' . $data->id));
-            $breadcrumb->add('Apply', current_url());
-            $this->data['breadcrumb'] = $breadcrumb->render();
-    
-            return view('Modules\Frontend\Views\Vacancies\apply', $this->data);
+            $this->data['data'] = $data;
+            return view('Modules\Frontend\Views\Vacancies\complete_data', $this->data);
         }
-    }
-
-    public function delete($id)
-    {
-        $this->request->isAJAX() or exit();
-        $data = $this->model->find($id);
-        if ($data) {
-            $this->model->delete($id);
-            $return = ['message' => sprintf(lang('Common.delete.success'), lang('QuestionTypes.heading') . ' ' . $data->name), 'status' => 'success'];
-        } else {
-            $return = ['message' => lang('Common.not_found'), 'status' => 'error'];
-        }
-        echo json_encode($return);
-    }
-
-    public function job_applications(){
-        $breadcrumb = new \App\Libraries\Breadcrumb;
-        $breadcrumb->add(lang('Common.home'), site_url());
-        $breadcrumb->add(lang('JobVacancies.job_applications'), site_url());
-
-        $this->data['title'] = lang('JobVacancies.job_applications');
-        $this->data['heading'] = lang('JobVacancies.job_applications');
-
-        $jobApplicationModel = new \App\Models\JobApplicationsModel();
-        $this->data['job_applications'] =  $jobApplicationModel->where('id_pelamar', $this->session->get('id_pelamar'))->findAll();
-
-        $this->data['breadcrumb'] = $breadcrumb->render();
-        return view('Modules\Frontend\Views\Vacancies\applications', $this->data);
     }
 
     private function _setDefaultBreadcrumb(){

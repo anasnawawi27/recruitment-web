@@ -11,6 +11,7 @@ class QuestionsModel extends Model
         'id_kategori',
         'gambar',
         'pertanyaan',
-        'jawaban'
+        'jawaban',
+        'options'
     ];
 }
