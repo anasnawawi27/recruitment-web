@@ -1,5 +1,3 @@
-let indexQuestion = 1;
-
 $("body").on("click", ".add-option", function () {
   let index = $(this).data("index");
   let optionLength = $(".option-" + index).length;

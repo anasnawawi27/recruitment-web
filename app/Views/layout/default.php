@@ -126,7 +126,7 @@
           <?php if (has_permission('question_type')) : ?>
             <li <?php echo $module == "psikotest" && $menu == 'question_type' ?  'class="active"' : '' ?>>
               <a href="<?php echo route_to('question_types') ?>">
-                <i class="la la-briefcase"></i>
+                <i class="la la-file-text"></i>
                 <span class="menu-title"><?php echo lang('Common.question_type') ?></span>
               </a>
             </li>
@@ -134,7 +134,7 @@
           <?php if (has_permission('question')) : ?>
             <li <?php echo $module == "psikotest" && $menu == 'question' ?  'class="active"' : '' ?>>
               <a href="<?php echo route_to('questions') ?>">
-                <i class="la la-file-alt"></i>
+                <i class="la la-question"></i>
                 <span class="menu-title"><?php echo lang('Common.question') ?></span>
               </a>
             </li>

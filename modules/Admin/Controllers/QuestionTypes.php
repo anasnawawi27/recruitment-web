@@ -128,7 +128,6 @@ class QuestionTypes extends BaseController
         }
         $table->setLimit($getData['offset'], $getData['limit']);
         $table->setFilter($filter);
-        // $table->withUser();
         $table->setSelect("a.id, a.kategori, '".($this->permEdit ? route_to('question_type_form', 'ID') : '')."' AS `edit`, '".($this->permDelete ? route_to('question_type_delete', 'ID') : '')."' AS `delete`");
         $output['rows'] = $table->getAll();
         $output['total'] = $table->countAll();
@@ -185,7 +184,7 @@ class QuestionTypes extends BaseController
         $data = $this->model->find($id);
         if ($data) {
             $this->model->delete($id);
-            $return = ['message' => sprintf(lang('Common.delete.success'), lang('QuestionTypes.heading') . ' ' . $data->name), 'status' => 'success'];
+            $return = ['message' => sprintf(lang('Common.deleted.success'), lang('QuestionTypes.heading') . ' ' . $data->kategori), 'status' => 'success'];
         } else {
             $return = ['message' => lang('Common.not_found'), 'status' => 'error'];
         }

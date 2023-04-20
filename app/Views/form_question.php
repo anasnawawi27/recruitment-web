@@ -11,116 +11,241 @@
                 <?php echo isset($breadcrumb) ? $breadcrumb : ''; ?>
             </div>
         </div>
-        <div class="card-body">
-            <input type="hidden" name="id" value="">
-            <div class="form-group row">
-                <label for="kategori" class="col-form-label col-md-2 col-sm-4">
-                    Kategori
-                </label>
-                <div class="col-md-5">
-                    <select class="form-control select2" id="kategori" name="id_kategori">
-                        <?php foreach($types as $type) : ?>
-                        <option value="<?= $type->id ?>"><?= $type->kategori ?></option>
-                        <?php endforeach ?>
-                    </select>
-                </div>
+        <div class="card-body pt-0">
+            <input type="hidden" name="id_kategori" value="<?= $type->id ?>">
+            <div class="d-flex align-items-center">
+                <h5 class="font-weight-bolder mb-0 mr-1">Kategori Soal :</h5>
+                <h5 class="mb-0"><?= $type->kategori ?></h5>
             </div>
         </div>
     </div>
     
     <h5 class="font-weight-bolder mt-1">Pertanyaan</h5>
     <div class="questions">
-        <div class="card shadow-none question question-0">
-            <div class="card-body">
-                <div class="d-flex w-100">
-                    <h5 class="font-weight-bolder mr-2">1. </h5>
-                    <div class="d-flex justify-content-between w-100">
-                        <div class="d-flex">
-                            <div class="form-group">
-                                <div class="fileinput fileinput-new" data-provides="fileinput">
-                                    <div class="fileinput-preview fileinput-exists thumbnail img-thumbnail" style="max-height: 200px; max-width: 100%;"></div>
-                                    <div>
-                                        <span class="btn btn-raised btn-sm btn-outline-secondary btn-file cursor-pointer">
-                                            <span class="fileinput-new">
-                                                <i class="la la-image"></i>
-                                            </span>
-                                            <span class="fileinput-exists">
-                                                <i class="la la-image"></i>
-                                            </span>
-                                            <input class="upload-file" type="file" name="image_questions[0]" data-param="2" accept="image/*">
-                                        </span>
-                                        <input type="hidden" name="delete_image" value="">
-                                        <a href="#" class="btn btn-raised btn-sm btn-danger fileinput-exists delete_image" data-dismiss="fileinput">
-                                            <i class="la la-trash"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="ml-1">
-                                <textarea cols="115" name="questions[0]" class="form-control" placeholder="Tambah Pertanyaan"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <h6 class="font-weight-bolder ml-2 mt-2 mb-1">Jawaban :</h6>
-                <div class="row opsi-0">
-                    <div class="col-12 pl-3 option-0 opsi-0-0">
-                        <div class="card border">
-                            <div class="card-body">
-                                <div class="d-flex align-items-center">
-                                    <div class="mr-2">
-                                        <label class="alpha-radio">
-                                            <input type="radio" checked name="answers[0]" value="A"/>
-                                            <span>A</span>
-                                        </label>
-                                    </div>
-                                    <div class="d-flex justify-content-between w-100">
-                                        <div class="d-flex justify-content-between">
-                                            <div class="form-group mb-0">
-                                                <div class="fileinput fileinput-new" data-provides="fileinput">
-                                                    <div class="fileinput-preview fileinput-exists thumbnail img-thumbnail" style="max-height: 200px; max-width: 100%;"></div>
-                                                    <div>
-                                                        <span class="btn btn-raised btn-sm btn-outline-secondary btn-file cursor-pointer">
-                                                            <span class="fileinput-new">
-                                                                <i class="la la-image"></i>
-                                                            </span>
-                                                            <span class="fileinput-exists">
-                                                                <i class="la la-image"></i>
-                                                            </span>
-                                                            <input class="upload-file" type="file" name="image_options[0][0]" data-param="2" accept="image/*">
-                                                        </span>
-                                                        <input type="hidden" name="delete_image" value="">
-                                                        <a href="#" class="btn btn-raised btn-sm btn-danger fileinput-exists delete_image" data-dismiss="fileinput">
-                                                            <i class="la la-trash"></i>
-                                                        </a>
-                                                    </div>
-                                                </div>
+        <?php if(count($data) > 0) : ?>
+            <?php foreach($data as $index => $question) : ?>
+                <div class="card shadow-none question question-<?= $index ?>">
+                    <div class="card-body">
+                        <div class="d-flex w-100">
+                            <h5 class="font-weight-bolder mr-2"><?= $index + 1 ?>. </h5>
+                            <div class="d-flex justify-content-between w-100">
+                                <div class="d-flex">
+                                    <?php
+                                    $cld = new \Cloudinary\Cloudinary(CLD_CONFIG);
+                                        if ($question->gambar) {
+                                            $image = $cld->image($question->gambar);
+                                            $file_preview = '<img style="width:200px; height:200px; object-fit: cover" src="' . $image . '">';
+                                            $file_input_class = 'fileinput-exists';
+                    
+                                        } else {
+                                            $file_input_class = 'fileinput-new';
+                                            $file_preview = '';
+                                        }
+                                    ?>
+                                    <div class="form-group">
+                                        <div class="fileinput <?= $file_input_class ?>" data-provides="fileinput">
+                                            <div class="fileinput-preview fileinput-exists thumbnail img-thumbnail" style="max-height: 200px; max-width: 100%;">
+                                                <?= $file_preview ?>
                                             </div>
-                                            <div class="ml-1">
-                                                <textarea cols="100" class="form-control" name="options[0][0]" placeholder="Jawaban"></textarea>
+                                            <div>
+                                                <span class="btn btn-raised btn-sm btn-outline-secondary btn-file cursor-pointer">
+                                                    <span class="fileinput-new">
+                                                        <i class="la la-image"></i>
+                                                    </span>
+                                                    <span class="fileinput-exists">
+                                                        <i class="la la-image"></i>
+                                                    </span>
+                                                    <input class="upload-file" type="file" name="image_questions[0]" data-param="2" accept="image/*">
+                                                </span>
+                                                <input type="hidden" name="delete_image" value="">
+                                                <a href="#" class="btn btn-raised btn-sm btn-danger fileinput-exists delete_image" data-dismiss="fileinput">
+                                                    <i class="la la-trash"></i>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="ml-1">
+                                        <textarea cols="115" name="questions[0]" class="form-control" placeholder="Tambah Pertanyaan"><?= $question->pertanyaan ?></textarea>
+                                    </div>
                                 </div>
+                                <?php if($index !== 0) : ?>
+                                    <a href="javascript:void(0)" class="text-danger delete-question ml-2" data-index="<?= $index ?>">
+                                        <i class="la la-close"></i>
+                                    </a>
+                                <?php endif ?>
+                            </div>
+                        </div>
+                        <h6 class="font-weight-bolder ml-2 mt-2 mb-1">Jawaban :</h6>
+                        <?php
+                            $alphabet = range('A', 'Z');
+                            $options = json_decode($question->options)
+                        ?>
+                        <?php foreach($options as $i => $option) : ?>
+                            <div class="row opsi-<?= $i ?>">
+                                <div class="col-12 pl-3 option-<?= $i ?> opsi-<?= $index . '-' . $i ?>">
+                                    <div class="card border">
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-center">
+                                                <div class="mr-2">
+                                                    <label class="alpha-radio">
+                                                        <input type="radio" <?= $alphabet[$i] == $question->jawaban ? 'checked' : '' ?> name="answers[<?= $index ?>]" value="<?= $alphabet[$i] ?>"/>
+                                                        <span><?= $alphabet[$i] ?></span>
+                                                    </label>
+                                                </div>
+                                                <?php
+                                                    if (isset($option->gambar_id)) {
+                                                        $image = $cld->image($option->gambar_id);
+                                                        $preview = '<img style="width:200px; height:200px; object-fit: cover" src="' . $image . '">';
+                                                        $input_class = 'fileinput-exists';
                                 
+                                                    } else {
+                                                        $input_class = 'fileinput-new';
+                                                        $preview = '';
+                                                    }
+                                                ?>
+                                                <div class="d-flex justify-content-between w-100">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div class="form-group mb-0">
+                                                            <div class="fileinput <?= $input_class ?>" data-provides="fileinput">
+                                                                <div class="fileinput-preview fileinput-exists thumbnail img-thumbnail" style="max-height: 200px; max-width: 100%;">
+                                                                    <?= $preview ?>
+                                                                </div>
+                                                                <div>
+                                                                    <span class="btn btn-raised btn-sm btn-outline-secondary btn-file cursor-pointer">
+                                                                        <span class="fileinput-new">
+                                                                            <i class="la la-image"></i>
+                                                                        </span>
+                                                                        <span class="fileinput-exists">
+                                                                            <i class="la la-image"></i>
+                                                                        </span>
+                                                                        <input class="upload-file" type="file" name="image_options[<?= $index ?>][<?= $i ?>]" data-param="2" accept="image/*">
+                                                                    </span>
+                                                                    <input type="hidden" name="delete_image" value="">
+                                                                    <a href="#" class="btn btn-raised btn-sm btn-danger fileinput-exists delete_image" data-dismiss="fileinput">
+                                                                        <i class="la la-trash"></i>
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ml-1">
+                                                            <textarea cols="100" class="form-control" name="options[<?= $index ?>][<?= $i ?>]" placeholder="Jawaban"><?= $option->opsi ?></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach ?>
+                        <div class="row">
+                            <div class="col-12 text-right">
+                                <button type="button" data-index="0" class="btn btn-glow btn-warning round btn-raised add-option">
+                                    <i class="la la-plus"></i> Tambah
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-12 text-right">
-                        <button type="button" data-index="0" class="btn btn-glow btn-warning round btn-raised add-option">
-                            <i class="la la-plus"></i> Tambah
-                        </button>
+            <?php endforeach ?>
+        <?php else : ?>
+            <div class="card shadow-none question question-0">
+                <div class="card-body">
+                    <div class="d-flex w-100">
+                        <h5 class="font-weight-bolder mr-2">1. </h5>
+                        <div class="d-flex justify-content-between w-100">
+                            <div class="d-flex">
+                                <div class="form-group">
+                                    <div class="fileinput fileinput-new" data-provides="fileinput">
+                                        <div class="fileinput-preview fileinput-exists thumbnail img-thumbnail" style="max-height: 200px; max-width: 100%;"></div>
+                                        <div>
+                                            <span class="btn btn-raised btn-sm btn-outline-secondary btn-file cursor-pointer">
+                                                <span class="fileinput-new">
+                                                    <i class="la la-image"></i>
+                                                </span>
+                                                <span class="fileinput-exists">
+                                                    <i class="la la-image"></i>
+                                                </span>
+                                                <input class="upload-file" type="file" name="image_questions[0]" data-param="2" accept="image/*">
+                                            </span>
+                                            <input type="hidden" name="delete_image" value="">
+                                            <a href="#" class="btn btn-raised btn-sm btn-danger fileinput-exists delete_image" data-dismiss="fileinput">
+                                                <i class="la la-trash"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ml-1">
+                                    <textarea cols="115" name="questions[0]" class="form-control" placeholder="Tambah Pertanyaan"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h6 class="font-weight-bolder ml-2 mt-2 mb-1">Jawaban :</h6>
+                    <div class="row opsi-0">
+                        <div class="col-12 pl-3 option-0 opsi-0-0">
+                            <div class="card border">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="mr-2">
+                                            <label class="alpha-radio">
+                                                <input type="radio" checked name="answers[0]" value="A"/>
+                                                <span>A</span>
+                                            </label>
+                                        </div>
+                                        <div class="d-flex justify-content-between w-100">
+                                            <div class="d-flex justify-content-between">
+                                                <div class="form-group mb-0">
+                                                    <div class="fileinput fileinput-new" data-provides="fileinput">
+                                                        <div class="fileinput-preview fileinput-exists thumbnail img-thumbnail" style="max-height: 200px; max-width: 100%;"></div>
+                                                        <div>
+                                                            <span class="btn btn-raised btn-sm btn-outline-secondary btn-file cursor-pointer">
+                                                                <span class="fileinput-new">
+                                                                    <i class="la la-image"></i>
+                                                                </span>
+                                                                <span class="fileinput-exists">
+                                                                    <i class="la la-image"></i>
+                                                                </span>
+                                                                <input class="upload-file" type="file" name="image_options[0][0]" data-param="2" accept="image/*">
+                                                            </span>
+                                                            <input type="hidden" name="delete_image" value="">
+                                                            <a href="#" class="btn btn-raised btn-sm btn-danger fileinput-exists delete_image" data-dismiss="fileinput">
+                                                                <i class="la la-trash"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="ml-1">
+                                                    <textarea cols="100" class="form-control" name="options[0][0]" placeholder="Jawaban"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 text-right">
+                            <button type="button" data-index="0" class="btn btn-glow btn-warning round btn-raised add-option">
+                                <i class="la la-plus"></i> Tambah
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        <?php endif ?>
     </div>
-    <div class="row">
+    <div class="row bg-white rounded w-100 p-2 m-0">
         <div class="col-12 text-right">
-            <button type="button" class="btn btn-warning btn-raised save">Simpan</button>
-            <button type="button" class="btn btn-success btn-raised add-question">Tambah Soal</button>
+            <button type="button" class="btn btn-info btn-glow add-question px-2 mr-1">
+                <i class="la la-file-text"></i> Tambah Soal
+            </button>
+            <button type="button" class="btn btn-success btn-glow save px-2">
+                <i class="la la-save"></i> Simpan
+            </button>
         </div>
     </div>
 </div>
@@ -129,7 +254,6 @@
 
 <?php $this->section('plugin_css'); ?>
 <link href="<?php echo base_url('vendors/bootstrap-fileinput/bootstrap-fileinput.css'); ?>" rel="stylesheet" type="text/css">
-<link href="<?php echo base_url('vendors/multiselect/bootstrap-multiselect.min.css'); ?>" rel="stylesheet" type="text/css" />
 <?php $this->endSection(); ?>
 
 <?php $this->section('custom_css'); ?>
@@ -144,15 +268,15 @@
         border-radius: 15px;
         border: 2px solid #1FBED6;
         background-color: white;
-        -webkit-appearance: none; /*to disable the default appearance of radio button*/
+        -webkit-appearance: none;
         -moz-appearance: none;
     }
 
-    label.alpha-radio input[type="radio"]:focus { /*no need, if you don't disable default appearance*/
-        outline: none; /*to remove the square border on focus*/
+    label.alpha-radio input[type="radio"]:focus {
+        outline: none; 
     }
 
-    label.alpha-radio input[type="radio"]:checked { /*no need, if you don't disable default appearance*/
+    label.alpha-radio input[type="radio"]:checked {
         background-color: #1FBED6;
     }
 
@@ -187,6 +311,11 @@
 <?php $this->endSection(); ?>
 
 <?php $this->section('custom_js'); ?>
+<script>
+    let indexQuestion = <?= count($data) > 0 ? count($data) : 1 ?>;
+    console.log(indexQuestion)
+
+</script>
 <script src="<?php echo base_url('js/form.js'); ?>"></script>
 <script src="<?php echo base_url('js/modules/question.js'); ?>"></script>
 <?php $this->endSection(); ?>

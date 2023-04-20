@@ -1,9 +1,8 @@
 <?php
 
-namespace Modules\Psikotest\Controllers;
+namespace Modules\Admin\Controllers;
 use \App\Controllers\BaseController;
 use \App\Models\QuestionsModel;
-use Cloudinary\Cloudinary;
 use Cloudinary\Api\Upload\UploadApi;
 
 class Questions extends BaseController
@@ -65,63 +64,36 @@ class Questions extends BaseController
         $this->data['breadcrumb'] = $breadcrumb->render();
         $this->data['title'] = lang('Questions.heading');
         $this->data['heading'] = lang('Questions.heading');
-        if($this->permAdd){
-            $this->data['left_toolbar'] = sprintf(lang('Common.btn.add'), route_to('question_form',0), lang('Questions.add_heading'));
-        }
         $this->data['toolbar'] = view('table-toolbar/default', $this->data);
         return view('list', $this->data);
     }
 
-    public function form($id){
+    public function form($categoryId){
         $data = NULL;
+        $questionType = NULL;
         $breadcrumb = $this->_setDefaultBreadcrumb();
-        if($id){
-            $this->permEdit or exit();
-            $data = $this->model->find($id);
-            if(!$data){
+        if($categoryId){
+            $this->permEdit && $this->permAdd or exit();
+
+            $questionTypeModel = new \App\Models\QuestionTypesModel();
+            $questionType = $questionTypeModel->find($categoryId);
+
+            if(!$questionType){
                 throw \Codeigniter\Exceptions\PageNotFoundException::forPageNotFound();
             }
+            $data = $this->model->where(['id_kategori' => $categoryId])->find();
             $breadcrumb->add(lang('Common.edit'), current_url());
         } else {
             $this->permAdd or exit();
             $breadcrumb->add(lang('Common.add'), current_url());
         }
 
-        $form = [
-            [
-                'id'        => 'id',
-                'type'      => 'hidden',
-                'value'     => ($data) ? $data->id : '',
-            ],
-            [
-                'id'        => 'kategori',
-                'value'     => ($data) ? $data->kategori : '',
-                'label'     => lang('QuestionTypes.category'),
-                'required'  => 'required',
-                'form_control_class' => 'col-md-5'
-            ],
-            [
-                'type'                  => 'submit',
-                'label'                 => lang('Common.btn.save_w_icon'),
-                'back_url'              => $this->data['module_url'],
-                'back_label'            => lang('Common.cancel'),
-                'input_container_class' => 'form-group row text-right'
-            ],
-        ];
-
-        $form_builder = new \App\Libraries\FormBuilder();
-        $this->data['form'] = [
-            'action'    => route_to('question_type_save'),
-            'build'     => $form_builder->build_form_horizontal($form),
-        ];
-        $this->data['breadcrumb'] = $breadcrumb->render();
         $this->data['data'] = $data;
+        $this->data['type'] = $questionType;
 
         $this->data['title'] = ($data ? lang('Common.edit') : lang('Common.add')) . ' ' . lang('Questions.heading');
         $this->data['heading'] = $this->data['title'];
-
-        $questionTypeModel = new \App\Models\QuestionTypesModel();
-        $this->data['types'] = $questionTypeModel->findAll();
+        $this->data['breadcrumb'] = $breadcrumb->render();
         return view('form_question', $this->data);
     }
 
@@ -139,8 +111,7 @@ class Questions extends BaseController
         }
         $table->setLimit($getData['offset'], $getData['limit']);
         $table->setFilter($filter);
-        // $table->withUser();
-        $table->setSelect("a.id, a.kategori, (SELECT COUNT(id) FROM soal WHERE id_kategori = a.id ) as jumlah_soal, '".($this->permEdit ? route_to('question_form', 'ID') : '')."' AS `edit`, '".($this->permDelete ? route_to('question_delete', 'ID') : '')."' AS `delete`");
+        $table->setSelect("a.id, a.kategori, (SELECT COUNT(id) FROM soal WHERE id_kategori = a.id ) as jumlah_soal, '".($this->permEdit && $this->permAdd ? route_to('question_form', 'ID') : '')."' AS `edit`");
         $output['rows'] = $table->getAll();
         $output['total'] = $table->countAll();
         $table->setFilter();
@@ -158,6 +129,26 @@ class Questions extends BaseController
 
             $options = $postData['options'];
             $questions = $postData['questions'];
+
+            $id_kategori = $postData['id_kategori'];
+            $soal = $this->model->where(['id_kategori' => $id_kategori])->find();
+
+            if($soal){
+                $cld = new UploadApi();
+                foreach($soal as $data){
+                    $this->model->delete($data->id);
+                    if($data->gambar){
+                        $cld->destroy($data->gambar);
+                    }
+
+                    $opsi = json_decode($data->options);
+                    foreach($opsi as $d){
+                        if(isset($d->gambar_id)){
+                            $cld->destroy($d->gambar_id); 
+                        }
+                    }
+                }
+            }
             
             foreach($questions as $key => $question){
                 $payload = [
@@ -190,12 +181,7 @@ class Questions extends BaseController
                     $opsi[] = $data;
                 }
                 $payload['options'] = json_encode($opsi);
-
-                if (!$postData['id']) {
-                    $this->model->insert($payload);
-                } else {
-                    $this->model->update($postData['id'], $payload);
-                }
+                $this->model->insert($payload);
             }
 
             $return = [
@@ -207,19 +193,6 @@ class Questions extends BaseController
         if (isset($return['redirect'])) {
             $this->session->setFlashdata('form_response_status', $return['status']);
             $this->session->setFlashdata('form_response_message', $return['message']);
-        }
-        echo json_encode($return);
-    }
-
-    public function delete($id)
-    {
-        $this->request->isAJAX() or exit();
-        $data = $this->model->find($id);
-        if ($data) {
-            $this->model->delete($id);
-            $return = ['message' => sprintf(lang('Common.delete.success'), lang('QuestionTypes.heading') . ' ' . $data->name), 'status' => 'success'];
-        } else {
-            $return = ['message' => lang('Common.not_found'), 'status' => 'error'];
         }
         echo json_encode($return);
     }

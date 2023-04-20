@@ -16,5 +16,12 @@ $routes->group('admin', ['namespace' => '\Modules\Admin\Controllers'], function 
         $routes->add('save', 'QuestionTypes::save', ['as' => 'question_type_save']);
         $routes->add('delete/(:any)', 'QuestionTypes::delete/$1', ['as' => 'question_type_delete']);
     });
+    $routes->group('question', function ($routes) {
+        $routes->add('/', 'Questions::index', ['as' => 'questions']);
+        $routes->add('get_list', 'Questions::get_list', ['as' => 'question_list']);
+        $routes->add('form/(:any)', 'Questions::form/$1', ['as' => 'question_form']);
+        $routes->add('save', 'Questions::save', ['as' => 'question_save']);
+        $routes->add('delete/(:any)', 'Questions::delete/$1', ['as' => 'question_delete']);
+    });
 });
 
