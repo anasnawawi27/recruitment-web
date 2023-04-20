@@ -37,6 +37,7 @@ class Questions extends BaseController
                     'field'         => 'kategori',
                     'sortable'      => 'true',
                     'switchable'    => 'true',
+                    'formatter'     => 'detailFormatterDefault',
                 ],
                 [
                     'title'         => lang('Questions.number_question'),
@@ -97,6 +98,32 @@ class Questions extends BaseController
         return view('form_question', $this->data);
     }
 
+    public function detail($categoryId){
+        $data = NULL;
+        $questionType = NULL;
+        $breadcrumb = $this->_setDefaultBreadcrumb();
+        if($categoryId){
+            $this->permEdit && $this->permAdd or exit();
+
+            $questionTypeModel = new \App\Models\QuestionTypesModel();
+            $questionType = $questionTypeModel->find($categoryId);
+
+            if(!$questionType){
+                throw \Codeigniter\Exceptions\PageNotFoundException::forPageNotFound();
+            }
+            $data = $this->model->where(['id_kategori' => $categoryId])->find();
+            $breadcrumb->add(lang('Common.detail'), current_url());
+        }
+
+        $this->data['data'] = $data;
+        $this->data['type'] = $questionType;
+
+        $this->data['title'] = lang('Common.detail') . ' ' . lang('Questions.heading');
+        $this->data['heading'] = $this->data['title'];
+        $this->data['breadcrumb'] = $breadcrumb->render();
+        return view('detail_question', $this->data);
+    }
+
     public function get_list(){
         $this->request->isAJAX() or exit();
         $getData = $this->request->getGet();
@@ -111,7 +138,7 @@ class Questions extends BaseController
         }
         $table->setLimit($getData['offset'], $getData['limit']);
         $table->setFilter($filter);
-        $table->setSelect("a.id, a.kategori, (SELECT COUNT(id) FROM soal WHERE id_kategori = a.id ) as jumlah_soal, '".($this->permEdit && $this->permAdd ? route_to('question_form', 'ID') : '')."' AS `edit`");
+        $table->setSelect("a.id, a.kategori, (SELECT COUNT(id) FROM soal WHERE id_kategori = a.id ) as jumlah_soal, '" . route_to('question_detail', 'ID') . "' AS detail, '".($this->permEdit && $this->permAdd ? route_to('question_form', 'ID') : '')."' AS `edit`");
         $output['rows'] = $table->getAll();
         $output['total'] = $table->countAll();
         $table->setFilter();

@@ -20,6 +20,7 @@ $routes->group('admin', ['namespace' => '\Modules\Admin\Controllers'], function 
         $routes->add('/', 'Questions::index', ['as' => 'questions']);
         $routes->add('get_list', 'Questions::get_list', ['as' => 'question_list']);
         $routes->add('form/(:any)', 'Questions::form/$1', ['as' => 'question_form']);
+        $routes->add('detail/(:any)', 'Questions::detail/$1', ['as' => 'question_detail']);
         $routes->add('save', 'Questions::save', ['as' => 'question_save']);
         $routes->add('delete/(:any)', 'Questions::delete/$1', ['as' => 'question_delete']);
     });
