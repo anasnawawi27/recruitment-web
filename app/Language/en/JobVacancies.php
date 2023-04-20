@@ -5,7 +5,7 @@ return [
     'image'         => 'Gambar',
     'position'      => 'Posisi',
     'qualification' => 'Kualifikasi',
-    'expired'       => 'Tanggal Expired',
+    'required_date' => 'Batas Tanggal',
     'visible'       => 'Tampil',
     'add_heading'   => 'Tambah Lowongan',
     'edit_heading'  => 'Edit Lowongan',

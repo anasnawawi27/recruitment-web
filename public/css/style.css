@@ -48,15 +48,15 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
 }
 
 .badge-success-light,
-.accepted {
+.status-accepted {
   color: #00e090;
   font-weight: bold;
   background-color: #d5f6ea;
 }
 
 .badge-danger-light,
-.failed_interview,
-.failed_psikotest {
+.status-failed_interview,
+.status-failed_psikotest {
   color: #ff4961;
   font-weight: bold;
   background-color: #ffe0e4;
@@ -77,7 +77,7 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
 }
 
 .badge.badge-pill.status-label.draft,
-.interview {
+.status-interview {
   color: #26acff;
   font-weight: bold;
   background-color: #d8eaf5;

@@ -5,29 +5,26 @@
         <div class="d-flex align-items-center">
             <h4 class="font-weight-bold"><?php echo (isset($heading) ? $heading : lang('heading')); ?></h4>
         </div>
-        <?php if (!isset($form['is_form_report'])) { ?>
-            <div class="d-flex align-items-center flex-wrap text-nowrap">
-                <?php echo isset($breadcrumb) ? $breadcrumb : ''; ?>
-            </div>
-        <?php } ?>
+        <div class="d-flex align-items-center flex-wrap text-nowrap">
+            <?php echo isset($breadcrumb) ? $breadcrumb : ''; ?>
+        </div>
     </div>
     <form id="form" action="<?= route_to('job_vacancy_save') ?>" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="id" value="">
-        <input type="hidden" name="id_lowongan" value="">
+        <input type="hidden" name="id" value="<?= $data && $data->id ? $data->id : '' ?>">
         <div class="form-group row">
             <label for="posisi" class="col-form-label col-md-2 col-sm-4">
                 Posisi
             </label>
             <div class="col-md-5">
-                <input type="text" name="posisi" value="" id="posisi" class="form-control">
+                <input type="text" name="posisi" value="<?= $data && $data->posisi? $data->posisi : '' ?>" id="posisi" required="required" class="form-control">
             </div>
         </div>
         <div class="form-group row">
             <label for="deskripsi" class="col-form-label col-md-2 col-sm-4">
                 Deskripsi
             </label>
-            <div class="col-md-5">
-                <textarea name="deskripsi" value="" id="deskripsi"  class="form-control editor"></textarea>
+            <div class="col-md-8">
+                <textarea name="deskripsi" id="deskripsi" required="required"  class="form-control editor"><?= $data && $data->deskripsi ? $data->deskripsi : '' ?></textarea>
             </div>
         </div>
         <div class="form-group row">
@@ -35,7 +32,7 @@
                 Batas Tanggal
             </label>
             <div class="col-md-5">
-                <input type="date" name="batas_tanggal" value="" id="batas-tanggal" class="form-control">
+                <input type="date" name="batas_tanggal" required="required" value="<?= $data && $data->batas_tanggal ? $data->batas_tanggal : '' ?>" id="batas-tanggal" class="form-control">
             </div>
         </div>
         <div class="form-group row">
@@ -43,8 +40,16 @@
                 Gambar
             </label>
             <div class="col-md-5 col-sm-8">
-                <div class="fileinput fileinput-new" data-provides="fileinput">
-                    <div class="fileinput-preview fileinput-exists thumbnail img-thumbnail" style="max-height: 200px; max-width: 200px;"></div>
+                <div class="fileinput <?= $data && $data->gambar ? 'fileinput-exists' : 'fileinput-new' ?>" data-provides="fileinput">
+                    <div class="fileinput-preview fileinput-exists thumbnail img-thumbnail" style="max-height: 200px; max-width: 200px;">
+                        <?php if($data && $data->gambar) : ?>
+                        <?php
+                            $cld = new \Cloudinary\Cloudinary(CLD_CONFIG);
+                            $image = $cld->image($data->gambar);
+                        ?>
+                            <img style="width:200px; height:200px; object-fit: cover" src="<?= $image ?>">
+                        <?php endif ?>
+                    </div>
                     <div>
                         <span class="btn btn-raised btn-success btn-file">
                             <span class="fileinput-new">
@@ -68,19 +73,33 @@
                 <h4 class="font-weight-bolder">Kualifikasi</h4>
             </div>
         </div>
+        <?php
+            $qualifikasi = $data && $data->qualifikasi ? json_decode($data->qualifikasi) : NULL;
+            $syarat_jurusan = NULL;
+            $minimum_nilai = NULL;
+            $minimum_pengalaman = NULL;
+            $berpengalaman = false;
+            
+            if($qualifikasi){
+                $syarat_jurusan = isset($qualifikasi->syarat_jurusan) ? implode(',', json_decode($qualifikasi->syarat_jurusan, true)) : NULL;
+                $minimum_nilai = isset($qualifikasi->minimum_nilai) ? $qualifikasi->minimum_nilai : NULL;
+                $minimum_pengalaman = isset($qualifikasi->minimum_pengalaman) ? $qualifikasi->minimum_pengalaman : NULL;
+                $berpengalaman = isset($qualifikasi->berpengalaman) ? $qualifikasi->berpengalaman : false;
+            };
+        ?>
         <div class="form-group row">
             <label for="pendidikan-terakhir" class="col-form-label col-md-2 col-sm-4">
                 Pendidikan Terakhir
             </label>
             <div class="col-md-5">
-                <select name="last_education" id="pendidikan-terakhir" class="form-control select2">
-                    <option value="1">SD</option>
-                    <option value="2">SMP</option>
-                    <option value="3">SMA</option>
-                    <option value="4">D3</option>
-                    <option value="5">S1</option>
-                    <option value="6">S2</option>
-                    <option value="7">S3</option>
+                <select name="last_education" id="pendidikan-terakhir" required="required" class="form-control select2">
+                    <option value="1" <?= $qualifikasi && $qualifikasi->last_education == 1 ? 'selected' : '' ?>>SD</option>
+                    <option value="2" <?= $qualifikasi && $qualifikasi->last_education == 2 ? 'selected' : '' ?>>SMP / MTs</option>
+                    <option value="3" <?= $qualifikasi && $qualifikasi->last_education == 3 ? 'selected' : '' ?>>SMA / SMK</option>
+                    <option value="4" <?= $qualifikasi && $qualifikasi->last_education == 4 ? 'selected' : '' ?>>D3</option>
+                    <option value="5" <?= $qualifikasi && $qualifikasi->last_education == 5 ? 'selected' : '' ?>>S1</option>
+                    <option value="6" <?= $qualifikasi && $qualifikasi->last_education == 6 ? 'selected' : '' ?>>S2</option>
+                    <option value="7" <?= $qualifikasi && $qualifikasi->last_education == 7 ? 'selected' : '' ?>>S3</option>
                 </select>
             </div>
         </div>
@@ -90,19 +109,19 @@
             </label>
             <div class="col-md-5">
                 <div class="d-inline-block custom-control custom-radio mr-1">
-                    <input type="radio" class="custom-control-input syarat-jurusan" name="syarat_jurusan" value="semua_jurusan" id="syarat-jurusan-1" checked>
+                    <input type="radio" class="custom-control-input syarat-jurusan" name="syarat_jurusan" value="semua_jurusan" id="syarat-jurusan-1" <?= !$qualifikasi || !$syarat_jurusan ? 'checked' : ''?>>
                     <label class="custom-control-label" for="syarat-jurusan-1">Semua Jurusan</label>
                 </div>
                 <div class="d-inline-block custom-control custom-radio mr-1">
-                    <input type="radio" class="custom-control-input syarat-jurusan" name="syarat_jurusan" value="jurusan_spesifik" id="syarat-jurusan-2">
+                    <input type="radio" class="custom-control-input syarat-jurusan" name="syarat_jurusan" value="jurusan_spesifik" id="syarat-jurusan-2" <?= $qualifikasi && $syarat_jurusan ? 'checked' : ''?>>
                     <label class="custom-control-label" for="syarat-jurusan-2">Jurusan Spesifik</label>
                 </div>
             </div>
         </div>
-        <div class="form-group row list-jurusan d-none">
+        <div class="form-group row list-jurusan <?= !$qualifikasi || !$syarat_jurusan ? 'd-none' : ''?>">
             <label for="jurusan" class="col-form-label col-md-2 col-sm-4"></label>
             <div class="col-md-5">
-                <input type="text" placeholder="Tambah Jurusan" name="jurusan" value="" id="jurusan" class="form-control tag">
+                <input type="text" placeholder="Tambah Jurusan" name="jurusan" value="<?= $qualifikasi && $syarat_jurusan ? $syarat_jurusan : ''?>" id="jurusan" class="form-control tag">
                 <small class="text-muted block-area">Pisah Jurusan dengan menekan enter</small>
             </div>
         </div>
@@ -112,19 +131,19 @@
             </label>
             <div class="col-md-5">
                 <div class="d-inline-block custom-control custom-radio mr-1">
-                    <input type="radio" class="custom-control-input minimum-nilai" value="tidak" name="minimum_nilai" id="nilai-minimum-1" checked>
+                    <input type="radio" class="custom-control-input minimum-nilai" value="tidak" name="minimum_nilai" id="nilai-minimum-1" <?= !$qualifikasi || !$minimum_nilai ? 'checked' : ''?>>
                     <label class="custom-control-label" for="nilai-minimum-1">Tidak ada nilai minimum</label>
                 </div>
                 <div class="d-inline-block custom-control custom-radio mr-1">
-                    <input type="radio" class="custom-control-input minimum-nilai" value="ya" name="minimum_nilai" id="nilai-minimum-2">
+                    <input type="radio" class="custom-control-input minimum-nilai" value="ya" name="minimum_nilai" id="nilai-minimum-2" <?= $qualifikasi && $minimum_nilai ? 'checked' : ''?>>
                     <label class="custom-control-label" for="nilai-minimum-2">Syarat Nilai Minimum</label>
                 </div>
             </div>
         </div>
-        <div class="form-group row nilai d-none">
+        <div class="form-group row nilai  <?= !$qualifikasi || !$minimum_nilai ? 'd-none' : ''?>">
             <label for="syarat-nilai" class="col-form-label col-md-2 col-sm-4"></label>
             <div class="col-md-5">
-                <input type="number" placeholder="Syarat Nilai" name="syarat_nilai" value="" id="syarat-nilai" class="form-control">
+                <input type="number" placeholder="Syarat Nilai" name="syarat_nilai" value="<?= $qualifikasi && $minimum_nilai ? $minimum_nilai : ''?>" id="syarat-nilai" class="form-control">
             </div>
         </div>
         <div class="form-group row">
@@ -133,22 +152,23 @@
             </label>
             <div class="col-md-5">
                 <div class="d-inline-block custom-control custom-radio mr-1">
-                    <input type="radio" class="custom-control-input" name="kriteria" value="Fresh Graduate" id="kriteria-1" checked>
+                    <input type="radio" class="custom-control-input kriteria" name="kriteria" value="Fresh Graduate" id="kriteria-1" <?= !$qualifikasi || !$berpengalaman ? 'checked' : ''?>>
                     <label class="custom-control-label" for="kriteria-1">Fresh Graduate & Berpengalaman</label>
                 </div>
                 <div class="d-inline-block custom-control custom-radio mr-1">
-                    <input type="radio" class="custom-control-input kriteria" name="kriteria" value="Berpengalaman" id="kriteria-2">
+                    <input type="radio" class="custom-control-input kriteria" name="kriteria" value="Berpengalaman" id="kriteria-2" <?= $qualifikasi && $berpengalaman ? 'checked' : ''?>>
                     <label class="custom-control-label" for="kriteria-2">Berpengalaman Saja</label>
                 </div>
             </div>
         </div>
-        <div class="form-group row berpengalaman d-none">
+        <div class="form-group row berpengalaman <?= !$qualifikasi || !$berpengalaman ? 'd-none' : ''?>">
             <label for="lama-pengalaman" class="col-form-label col-md-2 col-sm-4"></label>
             <div class="col-md-5">
-                <input type="text" placeholder="Minimum Pengalaman" name="minimum_pengalaman" value="" id="lama-pengalaman" class="form-control">
+                <input type="number" placeholder="Minimum Pengalaman" name="minimum_pengalaman" value="<?= $qualifikasi && $minimum_pengalaman ? $minimum_pengalaman : ''?>" id="lama-pengalaman" class="form-control">
                 <small class="text-muted block-area">Dalam Tahun</small>
             </div>
         </div>
+        <input type="hidden" name="id_psikotest" value="<?= $psikotest && $psikotest->id ?  $psikotest->id : '' ?>">
         <div class="row mb-2">
             <div class="col border-bottom">
                 <h4 class="font-weight-bolder">Psikotest</h4>
@@ -159,10 +179,10 @@
                 Kategori Soal
             </label>
             <div class="col-md-5">
-                <select name="kategori_soal[]" multiple="multiple" id="kategori-soal" class="form-control select2">
-                    <?php foreach($kategori_soal as $kategori) : ?>
-                    <option value="<?= $kategori->id ?>"><?= $kategori->kategori ?></option>
-                    <?php endforeach ?>
+                <select required="required" name="kategori_soal[]" multiple="true" id="kategori-soal" class="form-control select2">
+                    <!-- <?php //foreach($kategori_soal as $kategori) : ?>
+                    <option value="<?php //echo $kategori->id ?>"><?php //echo $kategori->kategori ?></option>
+                    <?php //endforeach ?> -->
                 </select>
             </div>
         </div>
@@ -171,7 +191,7 @@
                 Waktu Pengerjaan
             </label>
             <div class="col-md-5">
-                <input type="number" name="waktu_pengerjaan" value="" id="waktu-pengerjaan" class="form-control">
+                <input type="number" name="waktu_pengerjaan" required="required" value="<?= $psikotest && $psikotest->waktu_pengerjaan ?  $psikotest->waktu_pengerjaan : '' ?>" id="waktu-pengerjaan" class="form-control">
                 <small class="text-muted block-area">Menit</small>
             </div>
         </div>
@@ -180,8 +200,12 @@
                 Nilai Per-Soal
             </label>
             <div class="col-md-5">
-                <input type="number" name="nilai_persoal" value="" id="nilai-persoal" class="form-control">
-                <!-- <small class="text-muted block-area">Menit</small> -->
+                <input type="number" required="required" name="nilai_persoal" value="<?= $psikotest && $psikotest->point_persoal ?  $psikotest->point_persoal : '' ?>" id="nilai-persoal" class="form-control">
+                <div id="jumlah-soal-psikotest">
+                    <?php if(isset($jumlah_soal)) : ?>
+                        <small class="text-muted block-area">Jumlah Soal : <?= $jumlah_soal ?> Soal</small>
+                    <?php endif ?>
+                </div>
             </div>
         </div>
         <div class="form-group row">
@@ -189,21 +213,27 @@
                 Nilai Minimum
             </label>
             <div class="col-md-5">
-                <input type="number" name="nilai_minimum" value="" id="nilai-minimum" class="form-control">
+                <input type="number" name="nilai_minimum" <?= !$psikotest || !$psikotest->point_persoal ?  'disabled="disabled"' : '' ?> required="required" value="<?= $psikotest && $psikotest->nilai_minimum ?  $psikotest->nilai_minimum : '' ?>" id="nilai-minimum" class="form-control">
+                <div id="total-nilai">
+                    <?php if(isset($total_nilai)) : ?>
+                        <small class="text-muted block-area">Total Nilai : <?= $total_nilai ?>. Nilai Minimum tidak boleh melebihi nilai ini. </small>
+                    <?php endif ?>
+                </div>
             </div>
         </div>
+        <input type="hidden" name="id_interview" value="<?= $data && $data->id_interview ? $data->id_interview : '' ?>">
         <div class="form-group mt-1">
-            <input type="checkbox" id="switcherySize2" name="set_interview" class="switchery set-interview" data-size="sm" value="1"/>
+            <input type="checkbox" id="switcherySize2" name="set_interview" class="switchery set-interview" data-size="sm" value="1" <?= $data && $data->id_interview ? 'checked' : '' ?>/>
             <label for="switcherySize2" class="font-medium-2 text-bold-600 ml-1">Atur Jadwal Interview</label>
         </div>
-        <div class="row interview d-none">
+        <div class="row interview <?= $data && $data->id_interview ? '' : 'd-none' ?>">
             <div class="col-12">
                 <div class="form-group row">
                     <label for="waktu-interview" class="col-form-label col-md-2 col-sm-4">
                         Waktu Interview
                     </label>
                     <div class="col-md-5">
-                        <input type="datetime-local" name="waktu_interview" value="" id="waktu-interview" class="form-control">
+                        <input type="datetime-local" name="waktu_interview" value="<?= $interview && $interview->waktu ? $interview->waktu : '' ?>" id="waktu-interview" class="form-control">
                     </div>
                 </div>
                 <div class="form-group row">
@@ -211,16 +241,16 @@
                         Pewawancara
                     </label>
                     <div class="col-md-5">
-                        <input type="text" name="pewawancara" value="" id="pewawancara" class="form-control">
+                        <input type="text" name="pewawancara" value="<?= $interview && $interview->pewawancara ? $interview->pewawancara : '' ?>" id="pewawancara" class="form-control">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="kontent-email" class="col-form-label col-md-2 col-sm-4">
                         Body Email
                     </label>
-                    <div class="col-md-5">
-                        <small class="text-muted">Konten Email yang akan dikirim ke interviewee</small>
-                        <textarea name="konten_email" value="" id="kontent-email" class="form-control editor"></textarea>
+                    <div class="col-md-8">
+                        <small class="text-muted">Konten Email yang akan dikirim kepada Applicant</small>
+                        <textarea name="konten_email" value="" id="kontent-email" class="form-control editor"><?= $interview && $interview->konten_email ? $interview->konten_email : '' ?></textarea>
                     </div>
                 </div>
             </div>
@@ -278,6 +308,31 @@
 <?php $this->endSection(); ?>
 
 <?php $this->section('custom_js'); ?>
+<script>
+    let point_persoal = parseInt('<?= $psikotest && $psikotest->point_persoal ? $psikotest->point_persoal : 0 ?>');
+    let total_soal = parseInt('<?= isset($jumlah_soal) ? $jumlah_soal : 0 ?>');
+    let total_nilai = parseInt('<?= isset($total_nilai) ? $total_nilai : 0 ?>');
+
+    let categories = '<?= $kategori_soal ? json_encode($kategori_soal) : 'NULL' ?>';
+    let id_kategori = '<?= $psikotest && $psikotest->kategori_soal_ids ? $psikotest->kategori_soal_ids : NULL ?>';
+    let data = [];
+    if(categories){
+        categories = JSON.parse(categories);
+        categories.forEach((d, i) => {
+            data.push({id: d.id_kategori, text: d.kategori })
+        })
+    }
+
+    $("#kategori-soal").select2({
+        data: data
+    })
+
+    if(id_kategori){
+        $("#kategori-soal").val(JSON.parse(id_kategori));
+        $("#kategori-soal").trigger("change");
+    }
+
+</script>
 <script src="<?php echo base_url('js/form.js'); ?>"></script>
 <script src="<?php echo base_url('js/form_vacancy.js'); ?>"></script>
 <?php if (isset($customJS)) {

@@ -134,7 +134,7 @@
           <?php if (has_permission('question')) : ?>
             <li <?php echo $module == "psikotest" && $menu == 'question' ?  'class="active"' : '' ?>>
               <a href="<?php echo route_to('questions') ?>">
-                <i class="la la-briefcase"></i>
+                <i class="la la-file-alt"></i>
                 <span class="menu-title"><?php echo lang('Common.question') ?></span>
               </a>
             </li>

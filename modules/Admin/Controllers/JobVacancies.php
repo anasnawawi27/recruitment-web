@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Administrations\Controllers;
+namespace Modules\Admin\Controllers;
 use \App\Controllers\BaseController;
 use \App\Models\JobVacanciesModel;
 use Cloudinary\Api\Upload\UploadApi;
@@ -38,6 +38,13 @@ class JobVacancies extends BaseController
                     'sortable'      => 'true',
                     'switchable'    => 'true',
                 ],
+                [
+                    'title'         => lang('JobVacancies.required_date'),
+                    'field'         => 'batas_tanggal',
+                    'sortable'      => 'true',
+                    'switchable'    => 'true',
+                    'formatter'     => 'longDateFormatterDefault'
+                ],
             ],
             'url'       => route_to('job_vacancy_list'),
             'cookie_id' => 'table-job-vacancy'  
@@ -67,6 +74,8 @@ class JobVacancies extends BaseController
 
     public function form($id){
         $data = NULL;
+        $psikotest = NULL;
+        $interview = NULL;
         $breadcrumb = $this->_setDefaultBreadcrumb();
         if($id){
             $this->permEdit or exit();
@@ -75,89 +84,43 @@ class JobVacancies extends BaseController
                 throw \Codeigniter\Exceptions\PageNotFoundException::forPageNotFound();
             }
             $breadcrumb->add(lang('Common.edit'), current_url());
+
+            $psikotestModel = new \App\Models\PsikotestModel();
+            $interviewModel = new \App\Models\InterviewModel();
+
+            $psikotest = $psikotestModel->where(['id_lowongan' => $data->id])->first();
+            if($data->id_interview){
+                $interview = $interviewModel->find($data->id_interview);
+            }
         } else {
             $this->permAdd or exit();
             $breadcrumb->add(lang('Common.add'), current_url());
         }
 
-        $form = [
-            [
-                'id'        => 'id',
-                'type'      => 'hidden',
-                'value'     => ($data) ? $data->id : '',
-            ],
-            [
-                'id'        => 'posisi',
-                'value'     => ($data) ? $data->posisi : '',
-                'label'     => lang('JobVacancies.position'),
-                'required'  => 'required',
-                'form_control_class' => 'col-md-5'
-            ],
-            [
-                'id'    => 'qualifikasi',
-                'value' => ($data) ? $data->qualifikasi : '',
-                'label' => lang('JobVacancies.qualification'),
-                'type'  => 'textarea',
-                'class' => 'editor',
-                'form_control_class' => 'col-md-10 col-sm-9' 
-            ],
-            [
-                'id'    => 'tanggal_expired',
-                'value' => ($data) ? $data->tanggal_expired : '',
-                'label' => lang('JobVacancies.expired'),
-                'type'  => 'date',
-                'form_control_class' => 'col-md-5' 
-            ],
-            [
-                'id'    => 'tampil',
-                'value' => ($data) ? $data->tampil : '',
-                'type'  => 'checkbox',
-                'options' => [
-                    [
-                        'label' => 'Tampil',
-                        'value' => '1',
-                    ]
-                ],
-                'label' => lang('JobVacancies.visible'),
-                'form_control_class' => 'col-md-5' 
-            ],
-            [
-                'id'       => 'gambar',
-                'value'    => ($data) ? $data->gambar : '',
-                'label'    => lang('JobVacancies.image'),
-                'type'     => 'image',
-            ],
-            [
-                'type'                  => 'submit',
-                'label'                 => lang('Common.btn.save_w_icon'),
-                'back_url'              => $this->data['module_url'],
-                'back_label'            => lang('Common.cancel'),
-                'input_container_class' => 'form-group row text-right'
-            ],
-        ];
-
-        if($data && $data->tampil == 1){
-            $form[4]['options'][0]['checked'] = 'checked';
-        }
-
-        $form_builder = new \App\Libraries\FormBuilder();
-        $this->data['form'] = [
-            'action'    => route_to('job_vacancy_save'),
-            'build'     => $form_builder->build_form_horizontal($form),
-        ];
         $this->data['breadcrumb'] = $breadcrumb->render();
         $this->data['data'] = $data;
+        $this->data['psikotest'] = $psikotest;
+        $this->data['interview'] = $interview;
+
+        if($psikotest){
+            $db = db_connect();
+            $builder = $db->table('soal');
+            $builder->select('COUNT(id) as jumlah_soal');
+            $builder->whereIn('id_kategori', json_decode($psikotest->kategori_soal_ids, true));
+            $count = $builder->get()->getFirstRow();
+
+            $this->data['jumlah_soal'] = $count->jumlah_soal;
+            $this->data['total_nilai'] = $count->jumlah_soal * $psikotest->point_persoal;
+        }
 
         $this->data['title'] = ($data ? lang('Common.edit') : lang('Common.add')) . ' ' . lang('JobVacancies.heading');
         $this->data['heading'] = $this->data['title'];
 
         $db = db_connect();
-        $builder = $db->table('kategori_soal a');
-        $builder->select('a.*');
-        // $builder = $db->table('soal a');
-        // $builder->select('a.*, b.kategori');
-        // $builder->join('kategori_soal b', 'a.id_kategori = b.id', 'left');
-        // $builder->groupBy('a.id_kategori');
+        $builder = $db->table('soal a');
+        $builder->select('a.id_kategori, b.kategori');
+        $builder->join('kategori_soal b', 'a.id_kategori = b.id', 'left');
+        $builder->groupBy('a.id_kategori');
         $this->data['kategori_soal'] = $builder->get()->getResult();
 
         return view('form_vacancy', $this->data);
@@ -177,8 +140,7 @@ class JobVacancies extends BaseController
         }
         $table->setLimit($getData['offset'], $getData['limit']);
         $table->setFilter($filter);
-        // $table->withUser();
-        $table->setSelect("a.id, a.posisi, '".($this->permEdit ? route_to('job_vacancy_form', 'ID') : '')."' AS `edit`, '".($this->permDelete ? route_to('job_vacancy_delete', 'ID') : '')."' AS `delete`");
+        $table->setSelect("a.id, a.posisi, a.batas_tanggal, '".($this->permEdit ? route_to('job_vacancy_form', 'ID') : '')."' AS `edit`, '".($this->permDelete ? route_to('job_vacancy_delete', 'ID') : '')."' AS `delete`");
         $output['rows'] = $table->getAll();
         $output['total'] = $table->countAll();
         $table->setFilter();
@@ -305,15 +267,25 @@ class JobVacancies extends BaseController
                 $psikotestModel->insert($psikotest);
 
             } else {
-                $postData['updated_by'] = user_id();
-                $this->model->update($postData['id'], $postData);
                 
                 if(isset($postData['set_interview'])){
-                    $interview['id_lowongan'] = $insertId;
-                    $interviewModel->insert($interview);
+                    if($postData['id_interview']){
+                        $interviewModel->update($postData['id_interview'], $interview);
+                        $lowongan['id_interview'] = $postData['id_interview'];
+                    } else {
+                        $interviewModel->insert($interview);
+                        $lowongan['id_interview'] =  $interviewModel->getInsertID();
+                    }
                 } else {
-                    $interviewModel->where('id_lowongan', $insertId)->delete();
+                    if($postData['id_interview']){
+                        $interviewModel->delete($postData['id_interview']);
+                    }
+                    $lowongan['id_interview'] = NULL;
                 }
+
+                $lowongan['updated_by'] = user_id();
+                $this->model->update($postData['id'], $lowongan);
+                $psikotestModel->update($postData['id_psikotest'], $psikotest);
             }
 
             $return = [
@@ -334,13 +306,41 @@ class JobVacancies extends BaseController
         $this->request->isAJAX() or exit();
         $data = $this->model->find($id);
         if ($data) {
+            $interviewModel = new \App\Models\InterviewModel();
+            $psikotestModel = new \App\Models\PsikotestModel();
+
+            if($data->gambar){
+                $cld = new UploadApi();
+                $cld->destroy($data->gambar);
+            }
+
+            $psikotestModel->where(['id_lowongan' => $data->id])->delete();
+            if($data->id_interview){
+                $interviewModel->delete($data->id_interview);
+            }
+            
             $this->model->update($id, ['deleted_by' => user_id()]);
             $this->model->delete($id);
-            $return = ['message' => sprintf(lang('Common.delete.success'), lang('JobVacancies.heading') . ' ' . $data->name), 'status' => 'success'];
+
+
+            $return = ['message' => sprintf(lang('Common.deleted.success'), lang('JobVacancies.heading') . ' ' . $data->posisi), 'status' => 'success'];
         } else {
             $return = ['message' => lang('Common.not_found'), 'status' => 'error'];
         }
         echo json_encode($return);
+    }
+
+    public function getTotalQuestions(){
+        $this->request->isAJAX() or exit();
+        $ids_category = $this->request->getPost('ids_category');
+
+        $db = db_connect();
+        $builder = $db->table('soal');
+        $builder->select('COUNT(id) as jumlah_soal');
+        $builder->whereIn('id_kategori', $ids_category);
+        $count = $builder->get()->getFirstRow();
+
+        echo json_encode($count);
     }
 
     private function _setDefaultBreadcrumb(){

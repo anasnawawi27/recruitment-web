@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Psikotest\Controllers;
+namespace Modules\Admin\Controllers;
 use \App\Controllers\BaseController;
 use \App\Models\QuestionTypesModel;
 
