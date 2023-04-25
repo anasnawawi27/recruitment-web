@@ -8,6 +8,15 @@ $routes->group('admin', ['namespace' => '\Modules\Admin\Controllers'], function 
         $routes->add('save', 'JobVacancies::save', ['as' => 'job_vacancy_save']);
         $routes->add('delete/(:any)', 'JobVacancies::delete/$1', ['as' => 'job_vacancy_delete']);
         $routes->add('get_total_questions', 'JobVacancies::getTotalQuestions', ['as' => 'get_total_questions']);
+        $routes->add('email', 'JobVacancies::email', ['as' => 'email']);
+    });
+    $routes->group('applicant', function ($routes) {
+        $routes->add('/', 'Applicants::index', ['as' => 'applicants']);
+        $routes->add('get_list', 'Applicants::get_list', ['as' => 'applicant_list']);
+        $routes->add('form/(:any)', 'Applicants::form/$1', ['as' => 'applicant_form']);
+        $routes->add('save', 'Applicants::save', ['as' => 'applicant_save']);
+        $routes->add('delete/(:any)', 'Applicants::delete/$1', ['as' => 'applicant_delete']);
+        $routes->add('detail/(:any)', 'Applicants::detail/$1', ['as' => 'applicant_detail']);
     });
     $routes->group('question-type', function ($routes) {
         $routes->add('/', 'QuestionTypes::index', ['as' => 'question_types']);
@@ -23,6 +32,28 @@ $routes->group('admin', ['namespace' => '\Modules\Admin\Controllers'], function 
         $routes->add('detail/(:any)', 'Questions::detail/$1', ['as' => 'question_detail']);
         $routes->add('save', 'Questions::save', ['as' => 'question_save']);
         $routes->add('delete/(:any)', 'Questions::delete/$1', ['as' => 'question_delete']);
+    });
+
+    $routes->group('users', function ($routes) {
+        $routes->add('/', 'Users::index', ['as' => 'users']);
+        $routes->add('get_list', 'Users::get_list', ['as' => 'user_list']);
+        $routes->add('form/(:any)', 'Users::form/$1', ['as' => 'user_form']);
+        $routes->add('save', 'Users::save', ['as' => 'user_save']);
+        $routes->add('delete/(:any)', 'Users::delete/$1', ['as' => 'user_delete']);
+    });
+    $routes->group('roles', function ($routes) {
+        $routes->add('/', 'Roles::index', ['as' => 'user_roles']);
+        $routes->add('get_list', 'Roles::get_list', ['as' => 'user_role_list']);
+        $routes->add('form/(:any)', 'Roles::form/$1', ['as' => 'user_role_form']);
+        $routes->add('save', 'Roles::save', ['as' => 'user_role_save']);
+        $routes->add('delete/(:any)', 'Roles::delete/$1', ['as' => 'user_role_delete']);
+    });
+    $routes->group('permissions', function ($routes) {
+        $routes->add('/', 'Permissions::index', ['as' => 'permissions']);
+        $routes->add('get_list', 'Permissions::get_list', ['as' => 'permission_list']);
+        $routes->add('form/(:any)', 'Permissions::form/$1', ['as' => 'permission_form']);
+        $routes->add('save', 'Permissions::save', ['as' => 'permission_save']);
+        $routes->add('delete/(:any)', 'Permissions::delete/$1', ['as' => 'permission_delete']);
     });
 });
 

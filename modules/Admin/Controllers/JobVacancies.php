@@ -5,6 +5,10 @@ use \App\Controllers\BaseController;
 use \App\Models\JobVacanciesModel;
 use Cloudinary\Api\Upload\UploadApi;
 
+use SendinBlue\Client\Api\TransactionalEmailsApi;
+use SendinBlue\Client\Configuration;
+use GuzzleHttp\Client;
+
 class JobVacancies extends BaseController
 {
     protected $model;
@@ -26,6 +30,26 @@ class JobVacancies extends BaseController
         $this->permAdd = has_permission($this->perm. '/add');
         $this->permEdit = has_permission($this->perm. '/edit');
         $this->permDelete = has_permission($this->perm. '/delete');
+    }
+
+    public function email(){
+        // send email
+        $config = new Configuration();
+        $config->setApiKey('api-key', $_ENV['SENDINBLUE_KEY']);
+        $apiInstance = new TransactionalEmailsApi(new Client(), $config);
+        $sendSmtpEmail = new \SendinBlue\Client\Model\SendSmtpEmail();
+
+        $sendSmtpEmail['subject'] = 'Slip Penggajian Bulan';
+        $sendSmtpEmail['htmlContent'] = view('body_email');
+        $sendSmtpEmail['sender'] = array('name' => 'Mulia Bintang Kejora', 'email' => 'muliabintangkejora.noreply@gmail.com');
+        $sendSmtpEmail['to'] = array(
+            array('email' => 'anasnawawi001@gmail.com', 'name' => 'Anas Nawawi')
+        );
+
+        try {
+            $apiInstance->sendTransacEmail($sendSmtpEmail);
+        } catch (\Exception $e) {
+        }
     }
 
     public function index(){

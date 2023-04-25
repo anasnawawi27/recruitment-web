@@ -90,6 +90,7 @@
     <div class="main-menu-content">
       <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
         <?php if (in_groups('hrd')) : ?>
+          <li class="navigation-header"><span></span></li>
           <?php if (has_permission('dashboard')) : ?>
             <li <?php echo $module == "dashboard" && $menu == 'dashboard' ?  'class="mt-2 active"' : '' ?>>
               <a href="<?php echo route_to('dashboard') ?>">
@@ -120,6 +121,14 @@
               </a>
             </li>
           <?php endif; ?>
+          <?php if (has_permission('applicant')) : ?>
+            <li <?php echo $module == "administration" && $menu == 'applicant' ?  'class="active"' : '' ?>>
+              <a href="<?php echo route_to('applicants') ?>">
+                <i class="la la-folder-open"></i>
+                <span class="menu-title"><?php echo lang('Common.applicant') ?></span>
+              </a>
+            </li>
+          <?php endif; ?>
         <?php endif; ?>
         <?php if (in_groups('hrd')) : ?>
           <li class="navigation-header"><span><?php echo lang('Common.psikotest') ?></span></li>
@@ -142,6 +151,14 @@
         <?php endif; ?>
         <?php if (in_groups('hrd')) : ?>
           <li class="navigation-header"><span><?php echo lang('Common.authentication') ?></span></li>
+          <?php if (has_permission('user')) : ?>
+            <li <?php echo $module == "user" && $menu == 'users' ?  'class="active"' : '' ?>>
+              <a href="<?php echo route_to('users') ?>">
+                <i class="la la-user-plus"></i>
+                <span class="menu-title"><?php echo lang('Common.user') ?></span>
+              </a>
+            </li>
+          <?php endif; ?>
           <?php if (has_permission('user/role')) : ?>
             <li <?php echo $module == "user" && $menu == 'user_role' ?  'class="active"' : '' ?>>
               <a href="<?php echo route_to('user_roles') ?>">

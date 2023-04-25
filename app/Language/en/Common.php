@@ -72,9 +72,11 @@ return [
     'back'              => 'Kembali',
     'dashboard'         => 'Dashboard',
 
+
     'job_vacancy'       => 'Lowongan Kerja',
     'psikotest'         => 'Psikotest',
     'question_type'     => 'Kategori Soal',
 
     'question'          => 'Soal',
+    'applicant'         => 'Pelamar'
 ];

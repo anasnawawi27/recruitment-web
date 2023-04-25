@@ -30,7 +30,7 @@
                                             $cld = new \Cloudinary\Cloudinary(CLD_CONFIG);
                                                 if ($question->gambar) {
                                                     $image = $cld->image($question->gambar);
-                                                    $file_preview = '<img class="img-thumbnail mb-2" style="width:200px; height:200px; object-fit: cover" src="' . $image . '">';
+                                                    $file_preview = '<img class="img-thumbnail mb-2" style="width:200px; height:200px; object-fit: contain" src="' . $image . '">';
                                                 } else {
                                                     $file_preview = '';
                                                 }
@@ -64,7 +64,7 @@
                                                         <?php
                                                             if (isset($option->gambar_id)) {
                                                                 $image = $cld->image($option->gambar_id);
-                                                                $preview = '<img class="img-thumbnail mb-2" style="width:200px; height:200px; object-fit: cover" src="' . $image . '">';                                        
+                                                                $preview = '<img class="img-thumbnail mb-2" style="width:200px; height:200px; object-fit: contain" src="' . $image . '">';                                        
                                                             } else {
                                                                 $preview = '';
                                                             }

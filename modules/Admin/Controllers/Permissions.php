@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Users\Controllers;
+namespace Modules\Admin\Controllers;
 
 use \App\Controllers\BaseController;
 use \App\Models\PermissionsModel;
@@ -12,6 +12,7 @@ class Permissions extends BaseController
     private $perm;
     private $permView;
     private $permAdd;
+    private $permEdit;
     private $permDelete;
 
     public function __construct()

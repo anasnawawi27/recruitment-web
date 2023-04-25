@@ -131,7 +131,8 @@ $(document).ready(function () {
   const inputDeleteImage = $(".delete_image");
   if (inputDeleteImage.length > 0) {
     inputDeleteImage.click(function () {
-      inputDeleteImage.parent().find("input[name=delete_image]").val(1);
+      let param = $(this).data("param");
+      $(this).parent().find(`input[name=${param}]`).val(1);
     });
   }
   const $form = $("#form");

@@ -12,6 +12,7 @@ class UsersModel extends Model
     protected $useTimestamps    = true;
     protected $allowedFields    = [
         'nama_lengkap',
+        'email',
         'image',
         'username',
         'password_hash',

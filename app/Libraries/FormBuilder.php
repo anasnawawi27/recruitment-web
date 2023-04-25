@@ -2,7 +2,9 @@
 
 namespace App\Libraries;
 
+
 use CodeIgniter\I18n\Time;
+use \Cloudinary\Tag\ImageTag;
 
 class FormBuilder
 {
@@ -755,7 +757,67 @@ class FormBuilder
                                     <input type="file" name="upload_image" accept="image/*">
                                 </span>
                                 <input type="hidden" name="delete_image" value="">
-                                <a href="#" class="btn btn-raised btn-danger fileinput-exists delete_image" data-dismiss="fileinput">' . lang('Common.btn.image_picker.delete') . '</a>
+                                <a href="#" class="btn btn-raised btn-danger fileinput-exists delete_image" data-param="delete_image"  data-dismiss="fileinput">' . lang('Common.btn.image_picker.delete') . '</a>
+                            </div>
+                        </div>';
+                    break;
+                case 'form_custom_image':
+                    $value = $this->elm_options['value'];
+                    if ($value) {
+                        $file_input_class = 'fileinput-exists';
+                        // $file_preview = '<img src="'.$value.'">';
+
+                        $cld = new \Cloudinary\Cloudinary(CLD_CONFIG);
+                        $image = $cld->image($value);
+   
+                        $file_preview = '<img style="width:200px; height:200px; object-fit: cover" src="' . $image . '">';
+                    } else {
+                        $file_input_class = 'fileinput-new';
+                        //                        $file_preview = '<img src="https://placeholdit.imgix.net/~text?txtsize=33&txt=Preview&w=200&h=150" alt="...">';
+                        $file_preview = '';
+                    }
+                    $input_html_string = '<div class="fileinput ' . $file_input_class . '" data-provides="fileinput">
+                            <div class="fileinput-preview fileinput-exists thumbnail img-thumbnail" style="max-height: 200px; max-width: 200px;">
+                                ' . $file_preview . '
+                            </div>
+                            <div>
+                                <span class="btn btn-raised btn-success btn-file">
+                                    <span class="fileinput-new">' . lang('Common.btn.image_picker.select') . '</span>
+                                    <span class="fileinput-exists">' . lang('Common.btn.image_picker.change') . '</span>
+                                    <input type="file" name="'. $this->elm_options['name'] .'" accept="image/*">
+                                </span>
+                                <input type="hidden" name="delete_image_'. $this->elm_options['name'] .'" value="">
+                                <a href="#" class="btn btn-raised btn-danger fileinput-exists delete_image" data-param="delete_image_'. $this->elm_options['name'] .'" data-dismiss="fileinput">' . lang('Common.btn.image_picker.delete') . '</a>
+                            </div>
+                        </div>';
+                    break;
+                case 'form_files':
+                    $value = $this->elm_options['value'];
+                    if ($value) {
+                        $file_input_class = 'fileinput-exists';
+                        // $file_preview = '<img src="'.$value.'">';
+
+                        $cld = new \Cloudinary\Cloudinary(CLD_CONFIG);
+                        $image = $cld->image($value . '.png');                        
+
+                        $file_preview = '<img style="width:200px; height:200px; object-fit: cover" src="' . $image . '">';
+                    } else {
+                        $file_input_class = 'fileinput-new';
+                        //                        $file_preview = '<img src="https://placeholdit.imgix.net/~text?txtsize=33&txt=Preview&w=200&h=150" alt="...">';
+                        $file_preview = '';
+                    }
+                    $input_html_string = '<div class="fileinput ' . $file_input_class . '" data-provides="fileinput">
+                            <div class="fileinput-preview fileinput-exists thumbnail img-thumbnail" style="max-height: 200px; max-width: 200px;">
+                                ' . $file_preview . '
+                            </div>
+                            <div>
+                                <span class="btn btn-raised btn-warning btn-file">
+                                    <span class="fileinput-new">' . lang('Common.btn.image_picker.pdf') . '</span>
+                                    <span class="fileinput-exists">' . lang('Common.btn.image_picker.change') . '</span>
+                                    <input type="file" name="'. $this->elm_options['name'] .'" accept="application/pdf">
+                                </span>
+                                <input type="hidden" name="delete_image_'. $this->elm_options['name'] .'" value="">
+                                <a href="#" class="btn btn-raised btn-danger fileinput-exists delete_image" data-param="delete_image_'. $this->elm_options['name'] .'" data-dismiss="fileinput">' . lang('Common.btn.image_picker.delete') . '</a>
                             </div>
                         </div>';
                     break;
