@@ -47,15 +47,13 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
   display: inline-block;
 }
 
-.badge-success-light,
-.status-accepted {
+.badge-success-light {
   color: #00e090;
   font-weight: bold;
   background-color: #d5f6ea;
 }
 
 .badge-danger-light,
-.status-failed_interview,
 .status-failed_psikotest {
   color: #ff4961;
   font-weight: bold;
@@ -63,10 +61,10 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
 }
 
 .badge-secondary-light,
-.applied {
+.status-failed {
   color: #4c4e5a;
   font-weight: bold;
-  background-color: #d0d1d4;
+  background-color: #e1e1e1;
 }
 
 .badge.badge-pill.status-label.active,
@@ -77,10 +75,25 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
 }
 
 .badge.badge-pill.status-label.draft,
-.status-interview {
+.status-interview,
+.status-passed {
   color: #26acff;
-  font-weight: bold;
-  background-color: #d8eaf5;
+  background-color: #e4f4fd;
+}
+
+.status-applied {
+  color: #ff9149;
+  background-color: #ffece0;
+}
+
+.status-interview {
+  color: #666ee8;
+  background-color: #edeeff;
+}
+
+.status-accepted {
+  color: #00e090;
+  background-color: #defff3;
 }
 
 .badge.badge-pill.status-label.cancelled {

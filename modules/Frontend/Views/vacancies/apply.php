@@ -19,8 +19,8 @@
                                     <div class="col-md-8">
                                         <select name="last_education" id="pendidikan-terakhir" class="form-control select2">
                                             <option value="1">SD</option>
-                                            <option value="2">SMP</option>
-                                            <option value="3">SMA</option>
+                                            <option value="2">SMP / MTs</option>
+                                            <option value="3">SMA / SMK</option>
                                             <option value="4">D3</option>
                                             <option value="5">S1</option>
                                             <option value="6">S2</option>

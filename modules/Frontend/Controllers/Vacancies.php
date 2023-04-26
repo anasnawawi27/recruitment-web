@@ -201,10 +201,13 @@ class Vacancies extends BaseController
                     $recruiterModel->update($id_pelamar, $documents);
                 }
 
+                $jobApplicationModel = new \App\Models\JobApplicationsModel();
+                $application =  $jobApplicationModel->where(['id_lowongan' => $id, 'id_pelamar' => $this->session->get('id_pelamar')])->find();
+
                 $return = [
-                    'message'  =>sprintf('Lamaran kerja berhasil disubmit!'),
+                    'message'  => sprintf('Lamaran kerja berhasil disubmit!'),
                     'status'   => 'success',
-                    'redirect' => route_to('vacancies')
+                    'redirect' => route_to('vacancy_detail', $application->id)
                 ];
             } while (0);
             if (isset($return['redirect'])) {

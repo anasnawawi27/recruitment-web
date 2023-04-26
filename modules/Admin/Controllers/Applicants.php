@@ -129,7 +129,7 @@ class Applicants extends BaseController
         }
         $table->setLimit($getData['offset'], $getData['limit']);
         $table->setFilter($filter);
-        $table->setSelect("a.id, a.nama_lengkap, a.jenis_kelamin, a.tanggal_lahir, a.tempat_lahir, a.no_handphone_1, a.no_handphone_2, '" . route_to('applicant_detail', 'ID') . "' AS detail, '" . ($this->permEdit ? route_to('applicant_form', 'ID') : '') . "' AS `edit`, '" . ($this->permDelete ? route_to('applicant_delete', 'ID') : '') . "' AS `delete`");
+        $table->setSelect("a.id, a.nama_lengkap, a.jenis_kelamin, a.tanggal_lahir, a.tempat_lahir, a.no_handphone_1, a.no_handphone_2, a.email, '" . route_to('applicant_detail', 'ID') . "' AS detail, '" . ($this->permEdit ? route_to('applicant_form', 'ID') : '') . "' AS `edit`, '" . ($this->permDelete ? route_to('applicant_delete', 'ID') : '') . "' AS `delete`");
         $output['rows'] = $table->getAll();
         $output['total'] = $table->countAll();
         $table->setFilter();
@@ -309,7 +309,7 @@ class Applicants extends BaseController
 
         $userModel = new UsersModel();
         $userData = ($data) ? $userModel->find($data->id_user) : NULL;
-
+        
         $formTab3 = [
             [
                 'id'        => 'id_user',
@@ -446,6 +446,7 @@ class Applicants extends BaseController
             }
 
             $userData['nama_lengkap'] = $postData['nama_lengkap'];
+            $userData['username'] = $postData['username'];
             $userData['email'] = $postData['email'];
             $userData['active'] = $postData['active']; 
 

@@ -16,7 +16,7 @@
                             <h3 class="font-weight-bolder mb-0 ml-1"><?= $data->posisi ?></h3>
                         </div>
                         <div class="d-flex align-items-center mt-1">
-                            <span class="badge-status mb-0 <?= $data->status ?> text-uppercase">
+                            <span class="badge-status mb-0 status-<?= $data->status ?> text-capitalize">
                                 <?= $data->status ?>
                             </span>
                             <span class="font-weight-bolder d-inline-block mx-1"> | </span>
@@ -27,7 +27,6 @@
                             ?>
                             </span>
                         </div>
-                        <img class="img-fluid mt-3" src="<?= base_url('images/illustrations/worker.png') ?>" alt="worker">
                     </div>
                 </div>
             </div>
@@ -36,6 +35,14 @@
     <div class="col-md-7">
         <div class="card">
             <div class="card-body">
+            <?php if($data->status == 'passed') : ?>
+                <div class="text-center">
+                    <img class="w-50 mb-2" src="<?= base_url('images/illustrations/worker.png') ?>" alt="worker">
+                    <h4 class="font-weight-bolder mb-1">Lamaranmu sudah berhasil di apply !</h4>
+                    <p>Datamu belum lengkap. Silahkan Lengkapi data!</p>
+                    <a href="<?= route_to('complete_data', $data->id_lowongan) ?>" class="btn btn-glow btn-primary">Lengkapi Data</a>
+                </div>
+                <?php endif ?>
                 <?php if($data->status == 'applied') : ?>
                     <h5 class="font-weight-bolder mb-1">Tahap Psikotest</h5>
                     <div class="card shadow-none border-secondary border-lighten-5">
