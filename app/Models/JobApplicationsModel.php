@@ -14,6 +14,7 @@ class JobApplicationsModel extends Model
         'respond_input',
         'lolos_administrasi',
         'waktu_psikotest',
+        'respond_psikotest',
         'jumlah_soal_benar',
         'nilai_psikotest',
         'id_interview',

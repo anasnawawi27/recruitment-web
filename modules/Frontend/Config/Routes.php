@@ -11,6 +11,7 @@ $routes->group('vacancy', ['namespace' => '\Modules\Frontend\Controllers'], func
 $routes->group('job-application', ['namespace' => '\Modules\Frontend\Controllers'], function ($routes) {
     $routes->add('/', 'JobApplications::index', ['as' => 'job_applications']);
     $routes->add('detail/(:any)', 'JobApplications::detail/$1', ['as' => 'job_application_detail']);
-    $routes->add('psikotest/(:any)', 'JobApplications::psikotest/$1', ['as' => 'psikotest_session']);
-
+    $routes->add('psikotest_session/(:any)', 'JobApplications::psikotest_session/$1', ['as' => 'psikotest_session']);
+    $routes->add('set_status_failed/(:any)', 'JobApplications::set_status_failed/$1', ['as' => 'set_status_failed']);
+    $routes->add('submit_psikotest', 'JobApplications::submit_psikotest', ['as' => 'submit_psikotest']);
 });

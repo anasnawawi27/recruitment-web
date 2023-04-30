@@ -72,11 +72,19 @@ return [
     'back'              => 'Kembali',
     'dashboard'         => 'Dashboard',
 
-
+    'interview'         => 'Interview',
+    'schedule'          => 'Jadwal',
     'job_vacancy'       => 'Lowongan Kerja',
     'psikotest'         => 'Psikotest',
     'question_type'     => 'Kategori Soal',
 
     'question'          => 'Soal',
-    'applicant'         => 'Pelamar'
+    'applicant'         => 'Pelamar',
+
+    'agenda'            => 'Agenda',
+    'date'              => 'Tanggal',
+    'time'              => 'Waktu',
+    'interviewer'       => 'Interviewer',
+    'place'             => 'Tempat',
+    'link'              => 'Link',
 ];

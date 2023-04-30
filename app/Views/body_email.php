@@ -1,88 +1,133 @@
-
-<!doctype html>
-<html lang="en-US">
+<?php
+  use CodeIgniter\I18n\Time;
+?>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-    <title>New Account Email Template</title>
-    <meta name="description" content="New Account Email Template.">
-    <style type="text/css">
-        a:hover {text-decoration: underline !important;}
-    </style>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
-<body marginheight="0" topmargin="0" marginwidth="0" style="margin: 0px; background-color: #f2f3f8;" leftmargin="0">
-    <!-- 100% body table -->
-    <table cellspacing="0" border="0" cellpadding="0" width="100%" bgcolor="#f2f3f8"
-        style="@import url(https://fonts.googleapis.com/css?family=Rubik:300,400,500,700|Open+Sans:300,400,600,700); font-family: 'Open Sans', sans-serif;">
-        <tr>
-            <td>
-                <table style="background-color: #f2f3f8; max-width:670px; margin:0 auto;" width="100%" border="0"
-                    align="center" cellpadding="0" cellspacing="0">
-                    <tr>
-                        <td style="height:80px;">&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td style="text-align:center;">
-                            <a href="https://rakeshmandal.com" title="logo" target="_blank">
-                            <img width="60" src="https://i.ibb.co/hL4XZp2/android-chrome-192x192.png" title="logo" alt="logo">
-                          </a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="height:20px;">&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <table width="95%" border="0" align="center" cellpadding="0" cellspacing="0"
-                                style="max-width:670px; background:#fff; border-radius:3px; text-align:center;-webkit-box-shadow:0 6px 18px 0 rgba(0,0,0,.06);-moz-box-shadow:0 6px 18px 0 rgba(0,0,0,.06);box-shadow:0 6px 18px 0 rgba(0,0,0,.06);">
-                                <tr>
-                                    <td style="height:40px;">&nbsp;</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding:0 35px;">
-                                        <h1 style="color:#1e1e2d; font-weight:500; margin:0;font-size:32px;font-family:'Rubik',sans-serif;">Get started
-                                        </h1>
-                                        <p style="font-size:15px; color:#455056; margin:8px 0 0; line-height:24px;">
-                                            Your account has been created on the e-Health Care Admin HTML Theme by Propeller Pro. Below are your system generated credentials, <br><strong>Please change
-                                                the password immediately after login</strong>.</p>
-                                        <span
-                                            style="display:inline-block; vertical-align:middle; margin:29px 0 26px; border-bottom:1px solid #cecece; width:100px;"></span>
-                                        <p
-                                            style="color:#455056; font-size:18px;line-height:20px; margin:0; font-weight: 500;">
-                                            <strong
-                                                style="display: block;font-size: 13px; margin: 0 0 4px; color:rgba(0,0,0,.64); font-weight:normal;">Username</strong>wendell@xyz.com
-                                            <strong
-                                                style="display: block; font-size: 13px; margin: 24px 0 4px 0; font-weight:normal; color:rgba(0,0,0,.64);">Password</strong>f1_M1@j3[I2~
-                                        </p>
+<body>
 
-                                        <a href="login.html"
-                                            style="background:#20e277;text-decoration:none !important; display:inline-block; font-weight:500; margin-top:24px; color:#fff;text-transform:uppercase; font-size:14px;padding:10px 24px;display:inline-block;border-radius:50px;">Login
-                                            to your Account</a>
+<div style="margin: 0px; max-width: 100%; height: 100%;">
+  <table style="width: 100%; max-width: 100%; height: 100%;" height="100%" bgcolor="#f2f2f2" border="0" cellspacing="0" cellpadding="0" align="center">
+    <tbody>
+      <tr>
+        <td bgcolor="#f2f2f2">
+          <div style="background-color: #f2f2f2;">
+            <div style="margin: 0px auto; max-width: 600px;">
+              <table style="width: 100%; max-width: 600px;" border="0" cellspacing="0" cellpadding="0" align="center">
+                <tbody>
+                  <tr>
+                    <td style="direction: ltr; font-size: 0px; padding: 20px 0; text-align: center;">
+                      <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size: 0px; text-align: left; direction: ltr; display: inline-block; vertical-align: top; width: 100%;">
+                        <table style="vertical-align: top;" border="0" width="100%" cellspacing="0" cellpadding="0">
+                          <tbody>
+                            <tr style="background: #transparent; background-color: transparent; vertical-align: top;">
+                              <td style="font-size: 0px; padding: 10px 25px; word-break: break-word;" align="left" width="50%">
+                                <div style="font-family: Arial, sans-serif; font-size: 20px; line-height: 28px; text-align: left; color: #ffffff;">
+                                  <img height="70" src="https://tekpakgroup.com/wp-content/uploads/2021/12/Tekpak.png">
+                                </div>
+                              </td>
+                            </tr>
+                              <?php 
+                                $hour = date('H');
+                                $dayTerm = ($hour > 17) ? "Sore" : (($hour > 12) ? "Siang" : "Pagi");   
+                              ?>
+                            <tr style="background: #ffffff; background-color: #ffffff; vertical-align: top;">
+                              <td style="font-size: 0px; padding: 10px 25px; word-break: break-word;" align="left" colspan="2">
+                                <div style="font-family: Arial, sans-serif; font-size: 13px; line-height: 28px; text-align: left; color: #000000;">
+                                  Selamat <?= $dayTerm ?>, <?= $applicant->nama_lengkap ?>
+                                </div>
+                                <div style="font-family: Arial, sans-serif; font-size: 13px; line-height: 28px; text-align: left; color: #000000; margin-top: 20px">
+                                  Sehubungan dengan lamaran anda untuk posisi <b><?= $applicant->posisi ?></b>, kami mengundang anda untuk mengikuti proses <b>Interview</b> yang akan dilaksanakan sebagai berikut :
+                                </div>
+                              </td>
+                            </tr>
+                            <tr style="background: #ffffff; background-color: #ffffff; vertical-align: top;">
+                              <td style="font-size: 0px; padding: 10px 25px; word-break: break-word;" align="left" colspan="2">
+                                <div style="font-family: Arial, sans-serif; font-size: 13px; line-height: 28px; text-align: left; color: #000000;">
+                                  <table cellpadding="0" cellspacing="0" width="100%" border="0" style="color:#000000;font-family:Arial, sans-serif;font-size:14px;line-height:22px;table-layout:auto;width:100%;border:none;">
+                                    <tr style="text-align:left;padding:15px 0; font-size: 13px;">
+                                      <td width="40%">Agenda</td>
+                                      <td  width="60%">: <b><?= $interview->agenda ?></b></td>
+                                    </tr>
+                                    <tr style="text-align:left;padding:15px 0; font-size: 13px;">
+                                      <td>Hari/Tanggal</td>
+                                      <td>: <?=  Time::createFromFormat('Y-m-d', $interview->tanggal, 'Asia/Jakarta')->format('l, d M Y'); ?></td>
+                                    </tr>
+                                    <tr style="text-align:left;padding:15px 0; font-size: 13px;">
+                                      <td>Waktu</td>
+                                      <td>: Pukul <?= $interview->waktu ?> s/d selesai</td>
+                                    </tr>
+                                    <tr style="text-align:left;padding:15px 0; font-size: 13px;">
+                                      <td>Pewawancara</td>
+                                      <td>: <?= $interview->pewawancara ?></td>
+                                    </tr>
+                                    <?php if($interview->via == 'online') : ?>
+                                    <tr style="text-align:left;padding:15px 0; font-size: 13px;">
+                                      <td>Via</td>
+                                      <td>: Online (Link : <?= $interview->link ?>)</td>
+                                    </tr>
+                                    <?php else : ?>
+                                      <tr style="text-align:left;padding:15px 0; font-size: 13px;">
+                                        <td style="vertical-align: top">Lokasi</td>
+                                        <td>: <?= $interview->tempat ?></td>
+                                      </tr>
+                                    <?php endif ?>
+                                  </table>
+                                </div>
+                              </td>
+                            </tr>
+
+                            <tr style="background-color: transparent; background: transparent; vertical-align: top;">
+                              <td style="font-size: 0px; padding: 10px 25px; word-break: break-word;" colspan="2" align="left"> </td>
+                            </tr>
+                            <tr style="background: #ffffff; background-color: #ffffff; vertical-align: top;">
+                              <td style="font-size: 0px; padding: 10px 25px; word-break: break-word;" colspan="2" align="left">
+                                <div style="font-family: Arial, sans-serif; font-size: 13px; line-height: 28px; text-align: left; color: #000000;">
+                                  <p>Demikian mengenai undangan <b>Proses Interview</b> ini, peserta interview diharapkan datang tepat waktu, minimum 10 menit sebelum interview dimulai.</p>
+                                  <p> Atas perhatiannya, kami ucapkan terima kasih.</p>
+                                </div>
+                              </td>
+                            </tr>
+
+                            <tr style="background-color: transparent; background: transparent; vertical-align: top;">
+                              <td style="font-size: 0px; padding: 10px 25px; word-break: break-word;" colspan="2" align="left"> </td>
+                            </tr>
+                           
+                            <tr style="background: #999999; background-color: #999999; vertical-align: top;">
+                              <td style="font-size: 0px; padding: 10px 25px; word-break: break-word;" colspan="2" align="left">
+                              <div class="mj-column-per-50 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                                <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                                  <tr>
+                                    <td align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                                      <div style="font-family:Arial, sans-serif;font-size:13px;line-height:22px;text-align:left;color:#ffffff;">
+                                        <b>PT Tekpak Indonesia</b>
+                                        <br/>
+                                        JL Jababeka 4, SFB Blok T-1A, Cikarang Industrial Estate, Jawa Barat 17530<br/>
+                                        Telepon: (021) 8935090
                                     </td>
-                                </tr>
-                                <tr>
-                                    <td style="height:40px;">&nbsp;</td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="height:20px;">&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td style="text-align:center;">
-                            <p style="font-size:14px; color:rgba(69, 80, 86, 0.7411764705882353); line-height:18px; margin:0 0 0;">&copy; <strong>www.rakeshmandal.com</strong> </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="height:80px;">&nbsp;</td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-    <!--/100% body table-->
+                                  </tr>
+                                </table>
+                              </div>
+                          </tbody>
+                        </table>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 </body>
 
 </html>

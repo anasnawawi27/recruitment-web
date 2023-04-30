@@ -4,6 +4,7 @@ return [
     'heading'       => 'Lowongan Kerja',
     'image'         => 'Gambar',
     'position'      => 'Posisi',
+    'description'   => 'Deskripsi',
     'qualification' => 'Kualifikasi',
     'required_date' => 'Batas Tanggal',
     'visible'       => 'Tampil',
@@ -17,4 +18,5 @@ return [
     'submit'        => 'Submit',
 
     'job_applications' => 'Application',
+    'applicant'     => 'Applicants'
 ];

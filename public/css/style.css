@@ -9,6 +9,16 @@ NOTE:
 PLACE HERE YOUR OWN SCSS CODES AND IF NEEDED, OVERRIDE THE STYLES FROM THE OTHER STYLESHEETS.
 WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BETTER LIKE THIS.  */
 
+.circle {
+  margin-left: 10px;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  line-height: 25px;
+  font-weight: bold;
+  border: 3px solid #26acff;
+}
+
 #map .maps-center-marker {
   position: absolute !important;
   background: url(http://maps.gstatic.com/mapfiles/markers2/marker.png)

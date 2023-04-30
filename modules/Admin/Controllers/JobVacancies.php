@@ -32,26 +32,6 @@ class JobVacancies extends BaseController
         $this->permDelete = has_permission($this->perm. '/delete');
     }
 
-    public function email(){
-        // send email
-        $config = new Configuration();
-        $config->setApiKey('api-key', $_ENV['SENDINBLUE_KEY']);
-        $apiInstance = new TransactionalEmailsApi(new Client(), $config);
-        $sendSmtpEmail = new \SendinBlue\Client\Model\SendSmtpEmail();
-
-        $sendSmtpEmail['subject'] = 'Slip Penggajian Bulan';
-        $sendSmtpEmail['htmlContent'] = view('body_email');
-        $sendSmtpEmail['sender'] = array('name' => 'Mulia Bintang Kejora', 'email' => 'muliabintangkejora.noreply@gmail.com');
-        $sendSmtpEmail['to'] = array(
-            array('email' => 'anasnawawi001@gmail.com', 'name' => 'Anas Nawawi')
-        );
-
-        try {
-            $apiInstance->sendTransacEmail($sendSmtpEmail);
-        } catch (\Exception $e) {
-        }
-    }
-
     public function index(){
         $this->permView or exit();
         $this->data['table'] = [
@@ -61,6 +41,7 @@ class JobVacancies extends BaseController
                     'field'         => 'posisi',
                     'sortable'      => 'true',
                     'switchable'    => 'true',
+                    'formatter' => 'detailFormatterDefault',
                 ],
                 [
                     'title'         => lang('JobVacancies.required_date'),
@@ -164,7 +145,7 @@ class JobVacancies extends BaseController
         }
         $table->setLimit($getData['offset'], $getData['limit']);
         $table->setFilter($filter);
-        $table->setSelect("a.id, a.posisi, a.batas_tanggal, '".($this->permEdit ? route_to('job_vacancy_form', 'ID') : '')."' AS `edit`, '".($this->permDelete ? route_to('job_vacancy_delete', 'ID') : '')."' AS `delete`");
+        $table->setSelect("a.id, a.posisi, a.batas_tanggal, '" . route_to('job_vacancy_detail', 'ID') . "' AS detail, '".($this->permEdit ? route_to('job_vacancy_form', 'ID') : '')."' AS `edit`, '".($this->permDelete ? route_to('job_vacancy_delete', 'ID') : '')."' AS `delete`");
         $output['rows'] = $table->getAll();
         $output['total'] = $table->countAll();
         $table->setFilter();
@@ -322,6 +303,310 @@ class JobVacancies extends BaseController
             $this->session->setFlashdata('form_response_status', $return['status']);
             $this->session->setFlashdata('form_response_message', $return['message']);
         }
+        echo json_encode($return);
+    }
+
+    public function detail($id){
+        if ($id) {
+            $data = $this->model->find($id);;
+
+            if (!$data) {
+                throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+            }
+
+            $breadcrumb = $this->_setDefaultBreadcrumb();
+            $breadcrumb->add(lang('Common.detail'), current_url());
+
+            $applicationsModel = new \App\Models\JobApplicationsModel();
+
+            $this->data['interviews'] = $applicationsModel->select('lamaran.*, b.nama_lengkap, b.jenis_kelamin')->join('pelamar b', 'b.id = lamaran.id_pelamar', 'left')->where(['lamaran.id_lowongan' => $id])->whereIn('lamaran.status', ['interview', 'accepted'])->findAll();
+            $this->data['applicants'] = $applicationsModel->select('lamaran.*, b.nama_lengkap, b.jenis_kelamin')->join('pelamar b', 'b.id = lamaran.id_pelamar', 'left')->where(['lamaran.id_lowongan' => $id])->findAll();
+
+            $interviewModel = new \App\Models\InterviewModel();
+            $interview = NULL;
+
+            if($data->id_interview){
+                $interview = $interviewModel->find($data->id_interview);
+            }
+
+            $this->data['detail'] = $data;
+            $this->data['interview_data'] = $interview;
+            $this->data['title'] = lang('JobVacancies.detail_heading');
+            $this->data['heading'] = lang('JobVacancies.detail_heading');
+            $this->data['breadcrumb'] = $breadcrumb->render();
+            return view('Modules\Admin\Views\Job_Vacancies\detail', $this->data);
+        } else {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+    }
+
+    public function body_email(){
+        return view('body_email');
+    }
+
+    public function save_schedule(){
+        $this->request->isAJAX() or exit();
+
+        $rules = [
+            'agenda'         => [
+                'label' => lang('Common.agenda'),
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'Agenda wajib diisi'
+                ]
+            ],
+            'tanggal' => [
+                'label' => lang('Common.date'),
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'Tanggal wajib diisi'
+                ]
+            ],
+            'waktu' => [
+                'label' => lang('Common.time'),
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'Waktu wajib diisi'
+                ]
+            ],
+            'pewawancara' => [
+                'label' => lang('Common.interviewer'),
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'Pewawancara wajib diisi'
+                ]
+            ]
+        ];
+
+        $return['status'] = 'error';
+
+        do {
+            $postData = $this->request->getPost();
+
+            if (isset($postData['is_online'])) {
+                $rules['link'] = [
+                    'label' => lang('Common.link'),
+                    'rules' => 'required',
+                    'errors' => [
+                        'Link Wajib Diisi'
+                    ]
+                ];
+            } else {
+                $rules['tempat'] = [
+                    'label' => lang('Common.place'),
+                    'rules' => 'required',
+                    'errors' => [
+                        'Tempat Wajib Diisi'
+                    ]
+                ];
+            }
+
+            if (!$this->validate($rules)) {
+                $return['message'] = $this->validator->listErrors('default');
+                break;
+            }
+             $payload = [
+                'agenda' => $postData['agenda'],
+                'tanggal' => $postData['tanggal'],
+                'waktu'   => $postData['waktu'],
+                'pewawancara' => $postData['pewawancara']
+             ];
+
+            if(isset($postData['is_online'])){
+                $payload['via'] = 'online';
+                $payload['link'] = $postData['link'];
+                $payload['tempat'] = NULL;
+            } else {
+                $payload['via'] = 'offline';
+                $payload['tempat'] = $postData['tempat'];
+                $payload['link'] = NULL;
+            }
+
+            $interviewModel = new \App\Models\InterviewModel();
+
+            if (!$postData['id_interview']) {
+                $interviewModel->insert($payload);
+            } else {
+                $interviewModel->update($postData['id_interview'], $payload);
+            }
+
+            $return = [
+                'message'  =>sprintf(lang('Common.saved.success'), lang('Common.schedule')),
+                'status'   => 'success',
+                'redirect' => route_to('job_vacancy_detail', $postData['id_lowongan'])
+            ];
+            $this->session->setFlashdata('open_interview_tab', TRUE);
+        } while (0);
+        if (isset($return['redirect'])) {
+            $this->session->setFlashdata('form_response_status', $return['status']);
+            $this->session->setFlashdata('form_response_message', $return['message']);
+        }
+        echo json_encode($return);
+    }
+
+    public function save_and_send(){
+        $this->request->isAJAX() or exit();
+
+        $rules = [
+            'agenda'         => [
+                'label' => lang('Common.agenda'),
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'Agenda wajib diisi'
+                ]
+            ],
+            'tanggal' => [
+                'label' => lang('Common.date'),
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'Tanggal wajib diisi'
+                ]
+            ],
+            'waktu' => [
+                'label' => lang('Common.time'),
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'Waktu wajib diisi'
+                ]
+            ],
+            'pewawancara' => [
+                'label' => lang('Common.interviewer'),
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'Pewawancara wajib diisi'
+                ]
+            ]
+        ];
+
+        $return['status'] = 'error';
+
+        do {
+            $postData = $this->request->getPost();
+
+            if (isset($postData['is_online'])) {
+                $rules['link'] = [
+                    'label' => lang('Common.link'),
+                    'rules' => 'required',
+                    'errors' => [
+                        'Link Wajib Diisi'
+                    ]
+                ];
+            } else {
+                $rules['tempat'] = [
+                    'label' => lang('Common.place'),
+                    'rules' => 'required',
+                    'errors' => [
+                        'Tempat Wajib Diisi'
+                    ]
+                ];
+            }
+
+            if (!$this->validate($rules)) {
+                $return['message'] = $this->validator->listErrors('default');
+                break;
+            }
+             $payload = [
+                'agenda' => $postData['agenda'],
+                'tanggal' => $postData['tanggal'],
+                'waktu'   => $postData['waktu'],
+                'pewawancara' => $postData['pewawancara']
+             ];
+
+            if(isset($postData['is_online'])){
+                $payload['via'] = 'online';
+                $payload['link'] = $postData['link'];
+                $payload['tempat'] = NULL;
+            } else {
+                $payload['via'] = 'offline';
+                $payload['tempat'] = $postData['tempat'];
+                $payload['link'] = NULL;
+            }
+
+            $interviewModel = new \App\Models\InterviewModel();
+
+            if (!$postData['id_interview']) {
+                $interviewModel->insert($payload);
+            } else {
+                $interviewModel->update($postData['id_interview'], $payload);
+            }
+            $jobApplicationsModel = new \App\Models\JobApplicationsModel();
+            $applicants = $jobApplicationsModel->select('b.posisi, c.*')->join('lowongan b', 'b.id = lamaran.id_lowongan', 'left')->join('pelamar c', 'c.id = lamaran.id_pelamar', 'left')->where(['lamaran.id_lowongan' => $postData['id_lowongan'], 'lamaran.status' => 'interview'])->findAll();
+            
+            if($applicants){
+                foreach($applicants as $applicant){
+                    
+                    $param['applicant'] = $applicant;
+                    $param['interview'] = (object) $payload;
+    
+                    // send email
+                    $config = new Configuration();
+                    $config->setApiKey('api-key', $_ENV['SENDINBLUE_KEY']);
+                    $apiInstance = new TransactionalEmailsApi(new Client(), $config);
+                    $sendSmtpEmail = new \SendinBlue\Client\Model\SendSmtpEmail();
+    
+                    $sendSmtpEmail['subject'] = 'Informasi Interview - ' . $applicant->posisi;
+                    $sendSmtpEmail['htmlContent'] = view('body_email', $param);
+                    $sendSmtpEmail['sender'] = ['name' => 'PT Tekpak Indonesia', 'email' => 'tekpak.indonesia.test@gmail.com'];
+                    $sendSmtpEmail['to'] = [
+                        ['email' => $applicant->email, 'name' => $applicant->nama_lengkap]
+                    ];
+    
+                    try {
+                        $apiInstance->sendTransacEmail($sendSmtpEmail);
+                    } catch (\Exception $e) {
+                        $return = [
+                            'message'  => $e->getMessage(),
+                            'status'   => 'error',
+                        ];
+                        break;
+                    }
+                }
+            } else {
+                $return = [
+                    'message'  => 'Data Applicant Tidak Ditemukan!',
+                    'status'   => 'error',
+                ];
+            }
+
+            $return = [
+                'message'  => 'Interview Schedule Sended!',
+                'status'   => 'success',
+                'redirect' => route_to('job_vacancy_detail', $postData['id_lowongan'])
+            ];
+            $this->session->setFlashdata('open_interview_tab', TRUE);
+        } while (0);
+        if (isset($return['redirect'])) {
+            $this->session->setFlashdata('form_response_status', $return['status']);
+            $this->session->setFlashdata('form_response_message', $return['message']);
+        }
+        echo json_encode($return);
+    }
+
+    public function save_interview(){
+        $this->request->isAJAX() or exit();
+        $postData = $this->request->getPost();
+        $return = [
+            'message'  => 'Oops! Something Went Wrong!',
+            'status'   => 'error',
+        ];
+        $data = $this->model->find($postData['id_lowongan']);
+        if($data){
+            $jobApplicationsModel = new \App\Models\JobApplicationsModel();
+            $values = $postData['nilai_interview'];
+            foreach($values as $key => $value){
+                $jobApplicationsModel->where(['id_lowongan' => $postData['id_lowongan'], 'id_pelamar' => $key])->set(['nilai_interview' => $value])->update();
+            }
+            $return = [
+                'message'  => 'Input Nilai Interview Berhasil',
+                'status'   => 'success',
+                'redirect' => route_to('job_vacancy_detail', $postData['id_lowongan'])
+            ];
+        }
+        if (isset($return['redirect'])) {
+            $this->session->setFlashdata('form_response_status', $return['status']);
+            $this->session->setFlashdata('form_response_message', $return['message']);
+        }
+
         echo json_encode($return);
     }
 

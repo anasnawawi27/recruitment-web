@@ -19,7 +19,8 @@ return [
     'vaksin_date_2'     => 'Tanggal Vaksin 2',
     'vaksin_3'          => 'File Vaksin 3',
     'vaksin_date_3'     => 'Tanggal Vaksin 3',
-
+    'photo'             => 'Photo',
+    'cv'                => 'CV',
     'personal'          => 'Data Pribadi',
     'document'          => 'Dokumen',
     'account'           => 'Akun'

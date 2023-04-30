@@ -7,8 +7,12 @@ $routes->group('admin', ['namespace' => '\Modules\Admin\Controllers'], function 
         $routes->add('form/(:any)', 'JobVacancies::form/$1', ['as' => 'job_vacancy_form']);
         $routes->add('save', 'JobVacancies::save', ['as' => 'job_vacancy_save']);
         $routes->add('delete/(:any)', 'JobVacancies::delete/$1', ['as' => 'job_vacancy_delete']);
+        $routes->add('detail/(:any)', 'JobVacancies::detail/$1', ['as' => 'job_vacancy_detail']);
+        $routes->add('save_interview', 'JobVacancies::save_interview', ['as' => 'save_interview']);
+        $routes->add('save_schedule', 'JobVacancies::save_schedule', ['as' => 'save_schedule']);
+        $routes->add('save_and_send', 'JobVacancies::save_and_send', ['as' => 'save_and_send']);
         $routes->add('get_total_questions', 'JobVacancies::getTotalQuestions', ['as' => 'get_total_questions']);
-        $routes->add('email', 'JobVacancies::email', ['as' => 'email']);
+        $routes->add('body_email', 'JobVacancies::body_email', ['as' => 'body_email']);
     });
     $routes->group('applicant', function ($routes) {
         $routes->add('/', 'Applicants::index', ['as' => 'applicants']);
