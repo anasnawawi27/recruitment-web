@@ -218,10 +218,21 @@ class JobVacancies extends BaseController
 
             if(isset($postData['set_interview']) && $postData['set_interview'] == 1){
                 $interview = [
-                    'waktu'         => str_replace('T', ' ', $postData['waktu_interview']) . ':00',
-                    'pewawancara'   => $postData['pewawancara'],
-                    'konten_email' => nl2br( $postData['konten_email'])
-                ];
+                    'agenda' => $postData['agenda'],
+                    'tanggal' => $postData['tanggal'],
+                    'waktu'   => $postData['waktu'],
+                    'pewawancara' => $postData['pewawancara']
+                 ];
+    
+                if(isset($postData['is_online'])){
+                    $interview['via'] = 'online';
+                    $interview['link'] = $postData['link'];
+                    $interview['tempat'] = NULL;
+                } else {
+                    $interview['via'] = 'offline';
+                    $interview['tempat'] = $postData['tempat'];
+                    $interview['link'] = NULL;
+                }
             }
 
             $psikotest = [

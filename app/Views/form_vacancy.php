@@ -229,11 +229,27 @@
         <div class="row interview <?= $data && $data->id_interview ? '' : 'd-none' ?>">
             <div class="col-12">
                 <div class="form-group row">
-                    <label for="waktu-interview" class="col-form-label col-md-2 col-sm-4">
-                        Waktu Interview
+                    <label for="agenda" class="col-form-label col-md-2 col-sm-4">
+                        Agenda
                     </label>
                     <div class="col-md-5">
-                        <input type="datetime-local" name="waktu_interview" value="<?= $interview && $interview->waktu ? $interview->waktu : '' ?>" id="waktu-interview" class="form-control">
+                        <input type="text" name="agenda" value="<?= $interview && $interview->agenda ? $interview->agenda : '' ?>" id="agenda" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="tanggal-interview" class="col-form-label col-md-2 col-sm-4">
+                        Tanggal Interview
+                    </label>
+                    <div class="col-md-5">
+                        <input type="date" name="tanggal" value="<?= $interview && $interview->tanggal ? $interview->tanggal : '' ?>" id="tanggal-interview" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="waktu-interview" class="col-form-label col-md-2 col-sm-4">
+                        Waktu
+                    </label>
+                    <div class="col-md-5">
+                        <input type="time" name="waktu" value="<?= $interview && $interview->waktu ? $interview->waktu : '' ?>" id="waktu-interview" class="form-control">
                     </div>
                 </div>
                 <div class="form-group row">
@@ -245,12 +261,28 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="kontent-email" class="col-form-label col-md-2 col-sm-4">
-                        Body Email
+                    <label class="col-form-label col-md-2 col-sm-4"></label>
+                    <div class="col-md-5">
+                        <div class="d-inline-block custom-control custom-checkbox mr-1">
+                            <input type="checkbox" class="custom-control-input is-online" name="is_online" <?= $interview && $interview->via == 'online' ? 'checked' : '' ?> value="1" id="is-online">
+                            <label class="custom-control-label" for="is-online">Interview Online</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row <?= $interview && $interview->via == 'online' ? '' : 'd-none' ?> link">
+                    <label for="link" class="col-form-label col-md-2 col-sm-4">
+                        Link
+                    </label>
+                    <div class="col-md-5">
+                        <input type="text" name="link" value="<?= $interview && $interview->link ? $interview->link : '' ?>" id="link" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group row lokasi <?= $interview && $interview->via == 'online' ? 'd-none' : '' ?>">
+                    <label for="tempat" class="col-form-label col-md-2 col-sm-4">
+                        Lokasi
                     </label>
                     <div class="col-md-8">
-                        <small class="text-muted">Konten Email yang akan dikirim kepada Applicant</small>
-                        <textarea name="konten_email" value="" id="kontent-email" class="form-control editor"><?= $interview && $interview->konten_email ? $interview->konten_email : '' ?></textarea>
+                        <textarea name="tempat" id="tempat" class="form-control" cols="10" rows="4"><?= $interview && $interview->tempat ? $interview->tempat : '' ?></textarea>
                     </div>
                 </div>
             </div>
