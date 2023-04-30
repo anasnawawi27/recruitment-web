@@ -34,6 +34,16 @@ $("body").on("click", ".switchery", function () {
   }
 });
 
+$(".is-online").on("click", function () {
+  if ($(this).is(":checked")) {
+    $(".link").removeClass("d-none");
+    $(".lokasi").addClass("d-none");
+  } else {
+    $(".lokasi").removeClass("d-none");
+    $(".link").addClass("d-none");
+  }
+});
+
 $(".tag").tagsinput();
 
 let elem = $(".switchery");
@@ -48,7 +58,7 @@ $("#kategori-soal").on("change", function () {
     data: {
       ids_category: $(this).val(),
     },
-    url: siteUrl + "/administration/job-vacancy/get_total_questions",
+    url: siteUrl + "/admin/job-vacancy/get_total_questions",
     success: function (res) {
       total_soal = res.jumlah_soal;
       $("#jumlah-soal-psikotest").html(
