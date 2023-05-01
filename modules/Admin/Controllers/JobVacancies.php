@@ -330,6 +330,9 @@ class JobVacancies extends BaseController
 
             $applicationsModel = new \App\Models\JobApplicationsModel();
 
+            $this->data['accepted'] = $applicationsModel->select('lamaran.*, b.nama_lengkap, b.jenis_kelamin')->join('pelamar b', 'b.id = lamaran.id_pelamar', 'left')->where(['lamaran.id_lowongan' => $id, 'lamaran.nilai_interview !=' => NULL, 'lamaran.nilai_psikotest !=' => NULL,])->whereIn('lamaran.status', ['accepted'])->findAll();
+            $this->data['ranks'] = $applicationsModel->select('lamaran.*, b.nama_lengkap, b.jenis_kelamin')->join('pelamar b', 'b.id = lamaran.id_pelamar', 'left')->where(['lamaran.id_lowongan' => $id, 'lamaran.nilai_interview !=' => NULL, 'lamaran.nilai_psikotest !=' => NULL,])->whereIn('lamaran.status', ['interview', 'failed'])->findAll();
+            $this->data['ranks_ids'] = $applicationsModel->select('lamaran.id')->join('pelamar b', 'b.id = lamaran.id_pelamar', 'left')->where(['lamaran.id_lowongan' => $id, 'lamaran.nilai_interview !=' => NULL, 'lamaran.nilai_psikotest !=' => NULL,])->whereIn('lamaran.status', ['interview', 'failed'])->findAll();
             $this->data['interviews'] = $applicationsModel->select('lamaran.*, b.nama_lengkap, b.jenis_kelamin')->join('pelamar b', 'b.id = lamaran.id_pelamar', 'left')->where(['lamaran.id_lowongan' => $id])->whereIn('lamaran.status', ['interview', 'accepted'])->findAll();
             $this->data['applicants'] = $applicationsModel->select('lamaran.*, b.nama_lengkap, b.jenis_kelamin')->join('pelamar b', 'b.id = lamaran.id_pelamar', 'left')->where(['lamaran.id_lowongan' => $id])->findAll();
 
@@ -351,8 +354,43 @@ class JobVacancies extends BaseController
         }
     }
 
-    public function body_email(){
-        return view('body_email');
+    public function set_accepted(){
+        $this->request->isAJAX() or exit();
+        
+        $return = [
+            'message'  => 'Oops! Something Went Wrong!',
+            'status'   => 'error',
+        ];
+
+        $id_vacancy = $this->request->getPost('id');
+        $ids = $this->request->getPost('accepted');
+        $ids_failed = $this->request->getPost('failed');
+        if($ids){
+            $jobApplicationsModel = new \App\Models\JobApplicationsModel();
+            
+            foreach($ids as $id){
+                $jobApplicationsModel->update($id, ['status' => 'accepted']);
+            }
+
+            if($ids_failed){
+                foreach($ids_failed as $failed_id){
+                    $jobApplicationsModel->update($failed_id, ['status' => 'failed']);
+                }  
+            }
+            $return = [
+                'message'  => 'Set Accepted Berhasil',
+                'status'   => 'success',
+                'redirect' => route_to('job_vacancy_detail', $id_vacancy)
+            ];
+            $this->session->setFlashdata('open_accepted_tab', TRUE);
+        }
+        if (isset($return['redirect'])) {
+            $this->session->setFlashdata('form_response_status', $return['status']);
+            $this->session->setFlashdata('form_response_message', $return['message']);
+        }
+
+        echo json_encode($return);
+
     }
 
     public function save_schedule(){
@@ -612,6 +650,7 @@ class JobVacancies extends BaseController
                 'status'   => 'success',
                 'redirect' => route_to('job_vacancy_detail', $postData['id_lowongan'])
             ];
+            $this->session->setFlashdata('open_interview_tab', TRUE);
         }
         if (isset($return['redirect'])) {
             $this->session->setFlashdata('form_response_status', $return['status']);

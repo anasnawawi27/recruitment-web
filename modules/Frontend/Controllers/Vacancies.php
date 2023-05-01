@@ -61,7 +61,6 @@ class Vacancies extends BaseController
 
                 $data = $this->model->find($id);
                 $qualifikasi = json_decode($data->qualifikasi, true);
-                $experienced = 0;
 
                 $respond = [
                     'last_education' => $postData['last_education'],
@@ -99,8 +98,6 @@ class Vacancies extends BaseController
                     
                     if($postData['berpengalaman'] !== 'yes'){
                         $not_passed[] = false;
-                    } else {
-                        $experienced = 1;
                     }
 
                     if($postData['lama_pengalaman'] < $qualifikasi['minimum_pengalaman']){
@@ -124,7 +121,7 @@ class Vacancies extends BaseController
                     'respond_input'      => json_encode($respond),
                     'lolos_administrasi' => 1,
                     'id_interview'       => $data->id_interview,
-                    'berpengalaman'      => $experienced,
+                    'berpengalaman'      => ($postData['berpengalaman'] == 'yes' ? 1 : 0),
                     'lama_pengalaman'    => isset($postData['lama_pengalaman']) ? $postData['lama_pengalaman'] : NULL,
                     'status'             => 'passed',
                 ];
@@ -197,17 +194,17 @@ class Vacancies extends BaseController
                     $documents['tanggal_vaksin_2'] = $postData['tanggal_vaksin_2'];
                     $documents['tanggal_vaksin_3'] = $postData['tanggal_vaksin_1'];
                     
-                    $recruiterModel = new \App\Models\RecruitersModel();
-                    $recruiterModel->update($id_pelamar, $documents);
+                    $applicantModel = new \App\Models\ApplicantsModel();
+                    $applicantModel->update($id_pelamar, $documents);
                 }
 
                 $jobApplicationModel = new \App\Models\JobApplicationsModel();
-                $application =  $jobApplicationModel->where(['id_lowongan' => $id, 'id_pelamar' => $this->session->get('id_pelamar')])->find();
+                $application =  $jobApplicationModel->where(['id_lowongan' => $id, 'id_pelamar' => $this->session->get('id_pelamar')])->first();
 
                 $return = [
                     'message'  => sprintf('Lamaran kerja berhasil disubmit!'),
                     'status'   => 'success',
-                    'redirect' => route_to('vacancy_detail', $application->id)
+                    'redirect' => route_to('job_application_detail', $application->id)
                 ];
             } while (0);
             if (isset($return['redirect'])) {

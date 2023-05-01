@@ -12,7 +12,7 @@ $routes->group('admin', ['namespace' => '\Modules\Admin\Controllers'], function 
         $routes->add('save_schedule', 'JobVacancies::save_schedule', ['as' => 'save_schedule']);
         $routes->add('save_and_send', 'JobVacancies::save_and_send', ['as' => 'save_and_send']);
         $routes->add('get_total_questions', 'JobVacancies::getTotalQuestions', ['as' => 'get_total_questions']);
-        $routes->add('body_email', 'JobVacancies::body_email', ['as' => 'body_email']);
+        $routes->add('set_accepted', 'JobVacancies::set_accepted', ['as' => 'set_accepted']);
     });
     $routes->group('applicant', function ($routes) {
         $routes->add('/', 'Applicants::index', ['as' => 'applicants']);

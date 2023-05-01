@@ -12,10 +12,25 @@
                 <div class="mt-2" id="message"></div>
                 <form class="form-horizontal" id="register" method="post">
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="fullname"><?= lang('Auth.fullname') ?></label>
                                 <input type="text" id="fullname" class="form-control" name="nama_lengkap">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label><?= lang('Auth.gender') ?></label>
+                                <div class="input-group">
+                                    <div class="d-inline-block custom-control custom-radio mr-1">
+                                        <input type="radio" name="jenis_kelamin" checked class="custom-control-input" id="gender-1" value="laki-laki">
+                                        <label class="custom-control-label" for="gender-1">Laki-Laki</label>
+                                    </div>
+                                    <div class="d-inline-block custom-control custom-radio">
+                                        <input type="radio" name="jenis_kelamin" class="custom-control-input" id="gender-2" value="perempuan">
+                                        <label class="custom-control-label" for="gender-2">Perempuan</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -51,13 +66,13 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="username"><?= lang('Auth.username') ?></label>
-                                <input type="text" id="username" class="form-control" name="username">
+                                <input type="text" id="username" class="form-control" name="username" autocomplete="off">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="password"><?= lang('Auth.password') ?></label>
-                                <input type="password" id="password" class="form-control" name="password">
+                                <input type="password" id="password" class="form-control" name="password" autocomplete="off">
                             </div>
                         </div>
                         <div class="col-md-6">

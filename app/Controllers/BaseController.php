@@ -56,7 +56,7 @@ class BaseController extends Controller
         if (logged_in()) {
             $userModel = new \App\Models\UsersModel();
             if(in_groups('applicant')){
-                $user = $userModel->select('a.nama_lengkap, a.image, a.username, b.*')->from('users a')->join('pelamar b', 'a.id = b.id_user', 'left')->find(user_id());
+                $user = $userModel->select('a.nama_lengkap, a.image, a.username, b.*')->from('users a')->join('pelamar b', 'a.id = b.id_user', 'left')->where('a.id', user_id())->first();
                 
                 $this->data['user'] = $user;
                 $this->session->set('id_pelamar', $user->id);

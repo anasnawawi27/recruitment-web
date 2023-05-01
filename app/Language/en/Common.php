@@ -87,4 +87,7 @@ return [
     'interviewer'       => 'Interviewer',
     'place'             => 'Tempat',
     'link'              => 'Link',
+
+    'rank'              => 'Peringkat',
+    'accepted'          => 'Diterima'
 ];

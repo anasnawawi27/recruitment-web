@@ -34,6 +34,7 @@ class Auth extends BaseController
                 $this->config = config('Auth');
                 $this->auth = service('authentication');
                 $remember = isset($data['remember']) ? true : false;
+                
                 if (!$this->auth->attempt([
                     'username' => $data['username'],
                     'password' => $data['password']
@@ -126,12 +127,12 @@ class Auth extends BaseController
                 $userId = $this->model->getInsertID();
 
                 $db = db_connect();
-                $group = $db->table('auth_groups')->where('name', 'recruiter')->get()->getFirstRow();
+                $group = $db->table('auth_groups')->where('name', 'applicant')->get()->getFirstRow();
                 $db->table('auth_groups_users')->insert(['group_id' => $group->id, 'user_id' => $userId]);
 
                 $postData['id_user'] = $userId;
-                $recruitersModel = new \App\Models\RecruitersModel();
-                $recruitersModel->insert($postData);
+                $applicantsModel = new \App\Models\ApplicantsModel();
+                $applicantsModel->insert($postData);
 
                 $ipAddress = \Config\Services::request()->getIPAddress();
                 $loginModel = new \Myth\Auth\Models\LoginModel();

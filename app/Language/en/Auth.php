@@ -15,4 +15,5 @@ return [
     'no_handphone_1'   => 'No Handphone 1',
     'no_handphone_2'   => 'No Handphone 2',
     'email'            => 'Email',
+    'gender'           => 'Jenis Kelamin'
 ];
