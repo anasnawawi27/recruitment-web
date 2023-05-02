@@ -26,7 +26,7 @@ class JobApplications extends BaseController
 
         $this->data['title'] = lang('JobApplications.heading');
         $this->data['heading'] = lang('JobApplications.heading');
-        $this->data['applications'] = $this->model->select('a.*, b.posisi, b.gambar')->join('lowongan b', 'a.id_lowongan = b.id', 'left')->from('lamaran a')->where(['a.id_pelamar' => $this->id_pelamar])->find();
+        $this->data['applications'] = $this->model->select('lamaran.*, b.posisi, b.gambar')->join('lowongan b', 'b.id = lamaran.id_lowongan', 'left')->where(['lamaran.id_pelamar' => $this->id_pelamar])->find();
         $this->data['breadcrumb'] = $breadcrumb->render();
         return view('Modules\Frontend\Views\Job_applications\list', $this->data);
     }

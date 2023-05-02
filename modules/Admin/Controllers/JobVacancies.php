@@ -319,7 +319,7 @@ class JobVacancies extends BaseController
 
     public function detail($id){
         if ($id) {
-            $data = $this->model->find($id);;
+            $data = $this->model->find($id);
 
             if (!$data) {
                 throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
@@ -391,6 +391,28 @@ class JobVacancies extends BaseController
 
         echo json_encode($return);
 
+    }
+
+    public function modal_detail_psikotest($id)
+    {
+        $this->request->isAJAX() or exit;
+
+        $applicationsModel = new \App\Models\JobApplicationsModel();
+        $questionsModel = new \App\Models\QuestionsModel();
+        
+        $data = $applicationsModel->select('lamaran.*, b.nama_lengkap, b.jenis_kelamin, c.posisi, d.kategori_soal_ids')->join('pelamar b', 'b.id = lamaran.id_pelamar', 'left')->join('lowongan c', 'c.id = lamaran.id_lowongan', 'left')->join('psikotest d', 'd.id_lowongan = c.id', 'left')->where('lamaran.id', $id)->first();
+        $ids = json_decode($data->kategori_soal_ids);
+
+        $this->data['data'] = $data;
+
+        $categories = [];
+        foreach($ids as $id_kategori){
+            $categoryModel = new \App\Models\QuestionTypesModel();
+            $category = $categoryModel->find($id_kategori);
+            $categories[$category->kategori] =  $questionsModel->where('id_kategori', $id_kategori)->findAll();
+        }
+        $this->data['categories'] = $categories;
+        return view('Modules\Admin\Views\Job_Vacancies\modal_detail_psikotest', $this->data);
     }
 
     public function save_schedule(){

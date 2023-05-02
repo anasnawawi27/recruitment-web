@@ -164,6 +164,9 @@
             <div class="tab-pane fade p-2" id="tab-rank">                
                 <?php if($ranks) : ?>
                 <?php
+                
+                    $nilai_interview = [];
+                    $nilai_psikotest = [];
                     foreach ($ranks as $row) {
                         foreach ($row as $key => $value){
                         ${$key}[]  = $value; 
@@ -185,7 +188,7 @@
                             <div class="card-body row">
                                 <div class="col-md-2">
                                     <div class="img" style="width: 100%;height: 150px;background-size: cover; background-image: url(<?= $cld->image($rank->pas_photo) ?>);"></div>
-                                    <a href="<?= str_replace('v1', 'fl_attachment', $cld->image($rank->pas_photo . '.png')) ?>" download class="btn btn-primary text-white btn-sm btn-block mt-1"><i class="ft-download"></i> Download CV</a>
+                                    <a href="<?= str_replace('v1', 'fl_attachment', $cld->image($rank->cv . '.png')) ?>" download class="btn btn-primary text-white btn-sm btn-block mt-1"><i class="ft-download"></i> Download CV</a>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-2">
@@ -224,7 +227,11 @@
                                 </div>
                                 <div class="col-md-6 text-right">
                                     <div class="row skin skin-square mb-2">
-                                        <div class="col-md-12 col-sm-12">
+                                        <div class="col-10 text-left">
+                                            <button class="btn btn-outline-info round btn-sm mr-1 detail-psikotest" data-id="<?= $rank->id ?>"><i class="la la-pencil"></i> Jawaban Psikotest</button>
+                                            <a href="<?= route_to('applicant_detail', $rank->id_pelamar) ?>" class="btn btn-outline-primary round btn-sm"><i class="la la-user"></i> Detail Pelamar</a>
+                                        </div>
+                                        <div class="col-2">
                                             <fieldset>
                                                 <input class="select-check" type="checkbox" id="input-15" data-id="<?= $rank->id ?>">
                                                 <label for="input-15"></label>
@@ -280,6 +287,17 @@
             </div>
             <div class="tab-pane <?= session()->getFlashData('open_accepted_tab') ? 'show active' : '' ?> fade p-2" id="tab-accepted">
             <?php if($accepted) : ?>
+                <?php
+                    $nilai_interview = [];
+                    $nilai_psikotest = [];
+                    foreach ($accepted as $row) {
+                        foreach ($row as $key => $value){
+                            ${$key}[]  = $value; 
+                        }  
+                    }
+                    
+                    array_multisort($nilai_interview, SORT_DESC, $nilai_psikotest, SORT_DESC, $accepted);
+                ?>
                 <?php foreach($accepted as $ind => $accept) : ?>
                 <?php $cld = new \Cloudinary\Cloudinary(CLD_CONFIG); ?>
                 <div class="row">
@@ -288,7 +306,7 @@
                             <div class="card-body row">
                                 <div class="col-md-2">
                                     <div class="img" style="width: 100%;height: 150px;background-size: cover; background-image: url(<?= $cld->image($accept->pas_photo) ?>);"></div>
-                                    <a href="<?= str_replace('v1', 'fl_attachment', $cld->image($accept->pas_photo . '.png')) ?>" download class="btn btn-primary text-white btn-sm btn-block mt-1"><i class="ft-download"></i> Download CV</a>
+                                    <a href="<?= str_replace('v1', 'fl_attachment', $cld->image($accept->cv . '.png')) ?>" download class="btn btn-primary text-white btn-sm btn-block mt-1"><i class="ft-download"></i> Download CV</a>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-2">
@@ -356,6 +374,12 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="row">
+                                        <div class="col-12 text-right">
+                                            <button class="btn btn-outline-info round btn-sm mr-1 detail-psikotest" data-id="<?= $accept->id ?>"><i class="la la-pencil"></i> Jawaban Psikotest</button>
+                                            <a href="<?= route_to('applicant_detail', $accept->id_pelamar) ?>" class="btn btn-outline-primary round btn-sm"><i class="la la-user"></i> Detail Pelamar</a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -388,6 +412,50 @@
 <style>
     .border{
         border: 1px solid #e5e5e5!important;
+    }
+
+    .border-top{
+        border-top: 1px solid #e5e5e5!important;
+    }
+
+    label.alpha-radio input[type="radio"] {
+        width: 30px;
+        height: 30px;
+        border-radius: 15px;
+        border: 2px solid #1FBED6;
+        background-color: white;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+
+    label.alpha-radio input[type="radio"]:focus {
+        outline: none; 
+    }
+
+    label.alpha-radio input[type="radio"]:checked {
+        background-color: #1FBED6;
+    }
+
+    label.alpha-radio input[type="radio"]:checked ~ span:first-of-type {
+        color: white;
+    }
+
+    label.alpha-radio span:first-of-type {
+        position: relative;
+        left: -20px;
+        top: 0;
+        font-size: 15px;
+        color: #1FBED6;
+    }
+
+    label.alpha-radio{
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+    }
+    label.alpha-radio span {
+        position: relative;
+        top: -12px;
     }
 </style>
 <?php $this->endSection(); ?>
@@ -476,11 +544,6 @@
     
     $('#table-applicants').bootstrapTable({
         data: applicants
-    });
-
-    $(".sticky").scrollFix({
-        side: "top",
-        topPosition: 70,
     });
 
     $('.contain').perfectScrollbar();
@@ -599,5 +662,21 @@
             $(".link").addClass("d-none");
         }
     });
+
+    $('.detail-psikotest').on('click', function(){
+        let jobApplicationId = $(this).data('id');
+        $("#modal-psikotest .modal-content").html(
+            '<div class="w-100 text-center">' + loadingButtonText + "</div>"
+        );
+        $("#modal-psikotest .modal-content").load(siteUrl + '/admin/job-vacancy/modal_detail_psikotest/' + jobApplicationId);
+        $("#modal-psikotest").modal("show");
+    })
+
+    $(document).ready(function(){
+        $(".sticky").scrollFix({
+            side: "top",
+            topPosition: 70,
+        });
+    })
 </script>
 <?php $this->endSection(); ?>

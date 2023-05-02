@@ -13,6 +13,7 @@ $routes->group('admin', ['namespace' => '\Modules\Admin\Controllers'], function 
         $routes->add('save_and_send', 'JobVacancies::save_and_send', ['as' => 'save_and_send']);
         $routes->add('get_total_questions', 'JobVacancies::getTotalQuestions', ['as' => 'get_total_questions']);
         $routes->add('set_accepted', 'JobVacancies::set_accepted', ['as' => 'set_accepted']);
+        $routes->add('modal_detail_psikotest/(:any)', 'JobVacancies::modal_detail_psikotest/$1', ['as' => 'modal_detail_psikotest']);
     });
     $routes->group('applicant', function ($routes) {
         $routes->add('/', 'Applicants::index', ['as' => 'applicants']);
