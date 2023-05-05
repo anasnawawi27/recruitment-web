@@ -78,30 +78,38 @@ class Vacancies extends BaseController
                 }
 
                 $not_passed = [];
+
+                if (array_key_exists('syarat_gender', $qualifikasi)) {
+                    $user = $this->data['user'];
+                    if($user->jenis_kelamin !== $qualifikasi['syarat_gender']){
+                        $not_passed[] = true;
+                    }
+                }
+
                 if($postData['last_education'] < $qualifikasi['last_education']){
-                    $not_passed[] = false;
+                    $not_passed[] = true;
                 }
 
                 if (array_key_exists('syarat_jurusan', $qualifikasi)) {
                     if($postData['jurusan'] == 'other'){
-                        $not_passed[] = false;
+                        $not_passed[] = true;
                     }
                 }
 
                 if (array_key_exists('nilai_minimum', $qualifikasi)) {
                     if($postData['nilai_terakhir'] < $qualifikasi['nilai_minimum']){
-                        $not_passed[] = false;
+                        $not_passed[] = true;
                     }
                 }
 
                 if (array_key_exists('berpengalaman', $qualifikasi)) {
                     
                     if($postData['berpengalaman'] !== 'yes'){
-                        $not_passed[] = false;
+                        $not_passed[] = true;
                     }
 
                     if($postData['lama_pengalaman'] < $qualifikasi['minimum_pengalaman']){
-                        $not_passed[] = false;
+                        $not_passed[] = true;
                     }
                 }
 

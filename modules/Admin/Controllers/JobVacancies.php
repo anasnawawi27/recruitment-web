@@ -246,6 +246,11 @@ class JobVacancies extends BaseController
             $psikotestModel = new \App\Models\PsikotestModel();
 
             $qualifikasi = [];
+
+            if(isset($postData['syarat_gender'])){
+                $qualifikasi['syarat_gender'] = $postData['gender'];
+            }
+
             if($postData['last_education']){
                 $qualifikasi['last_education'] = $postData['last_education'];
             }

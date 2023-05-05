@@ -15,3 +15,9 @@ $routes->group('job-application', ['namespace' => '\Modules\Frontend\Controllers
     $routes->add('set_status_failed/(:any)', 'JobApplications::set_status_failed/$1', ['as' => 'set_status_failed']);
     $routes->add('submit_psikotest', 'JobApplications::submit_psikotest', ['as' => 'submit_psikotest']);
 });
+
+$routes->group('profile', ['namespace' => '\Modules\Frontend\Controllers'], function ($routes) {
+    $routes->add('/', 'Profile::index', ['as' => 'profile']);
+    $routes->add('form/(:any)', 'Profile::form/$1', ['as' => 'profile_form']);
+    $routes->add('save', 'Profile::save', ['as' => 'profile_save']);
+});

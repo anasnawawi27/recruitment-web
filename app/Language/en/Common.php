@@ -89,5 +89,8 @@ return [
     'link'              => 'Link',
 
     'rank'              => 'Peringkat',
-    'accepted'          => 'Diterima'
+    'accepted'          => 'Diterima',
+
+    'profile'           => 'Profile',
+    'about'             => 'Tentang Kami',
 ];

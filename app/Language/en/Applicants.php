@@ -3,7 +3,7 @@
 return [
     'heading'           => 'Pelamar',
     'add_heading'       => 'Tambah Pelamar',
-    'edit_heading'      => 'Edit Pelamat',
+    'edit_heading'      => 'Edit Pelamar',
     'detail_heading'    => 'Detail Pelamar',
     'fullname'          => 'Nama Lengkap',
     'gender'            => 'Jenis Kelamin',

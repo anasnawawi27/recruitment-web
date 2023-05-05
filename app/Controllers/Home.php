@@ -11,8 +11,8 @@ class Home extends BaseController
 
     public function index(){
 
-        $this->data['title'] = lang('Common.home');
-        $this->data['heading'] = lang('Common.home');
+        $this->data['title'] = lang('Common.about');
+        $this->data['heading'] = lang('Common.about');
         return view('home', $this->data);
     }
 }

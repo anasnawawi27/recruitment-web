@@ -75,18 +75,42 @@
         </div>
         <?php
             $qualifikasi = $data && $data->qualifikasi ? json_decode($data->qualifikasi) : NULL;
+            $syarat_gender = NULL;
             $syarat_jurusan = NULL;
             $minimum_nilai = NULL;
             $minimum_pengalaman = NULL;
             $berpengalaman = false;
             
             if($qualifikasi){
+                $syarat_gender = isset($qualifikasi->syarat_gender) ? $qualifikasi->syarat_gender : NULL;
                 $syarat_jurusan = isset($qualifikasi->syarat_jurusan) ? implode(',', json_decode($qualifikasi->syarat_jurusan, true)) : NULL;
                 $minimum_nilai = isset($qualifikasi->minimum_nilai) ? $qualifikasi->minimum_nilai : NULL;
                 $minimum_pengalaman = isset($qualifikasi->minimum_pengalaman) ? $qualifikasi->minimum_pengalaman : NULL;
                 $berpengalaman = isset($qualifikasi->berpengalaman) ? $qualifikasi->berpengalaman : false;
             };
         ?>
+        <div class="form-group row">
+            <label for="syarat-gender" class="col-form-label col-md-2 col-sm-4"></label>
+            <div class="col-md-5">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input syarat-gender" <?= $qualifikasi && $syarat_gender ? 'checked' : '' ?> name="syarat_gender" value="1" id="gender-qualification">
+                    <label class="custom-control-label" for="gender-qualification">Syarat Gender</label>
+                  </div>
+            </div>
+        </div>
+        <div class="form-group row gender <?= $qualifikasi && $syarat_gender ? '' : 'd-none' ?>">
+            <label for="gender" class="col-form-label col-md-2 col-sm-4"></label>
+            <div class="col-md-5">
+                <div class="d-inline-block custom-control custom-radio mr-1">
+                    <input type="radio" class="custom-control-input" <?= !$qualifikasi ? 'checked' : ( $qualifikasi && $syarat_gender == 'laki-laki' ? 'checked' : '') ?> value="laki-laki" name="gender" id="gender-1">
+                    <label class="custom-control-label" for="gender-1">Laki-Laki</label>
+                </div>
+                <div class="d-inline-block custom-control custom-radio mr-1">
+                    <input type="radio" class="custom-control-input" <?= $qualifikasi && $syarat_gender == 'perempuan' ? 'checked' : '' ?> value="perempuan" name="gender" id="gender-2">
+                    <label class="custom-control-label" for="gender-2">Perempuan</label>
+                </div>
+            </div>
+        </div>
         <div class="form-group row">
             <label for="pendidikan-terakhir" class="col-form-label col-md-2 col-sm-4">
                 Pendidikan Terakhir

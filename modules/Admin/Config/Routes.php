@@ -45,6 +45,8 @@ $routes->group('admin', ['namespace' => '\Modules\Admin\Controllers'], function 
         $routes->add('form/(:any)', 'Users::form/$1', ['as' => 'user_form']);
         $routes->add('save', 'Users::save', ['as' => 'user_save']);
         $routes->add('delete/(:any)', 'Users::delete/$1', ['as' => 'user_delete']);
+        $routes->add('profile_form/', 'Users::profile_form', ['as' => 'user_profile_form']);
+        $routes->add('profile_save/', 'Users::profile_save', ['as' => 'user_profile_save']);
     });
     $routes->group('roles', function ($routes) {
         $routes->add('/', 'Roles::index', ['as' => 'user_roles']);

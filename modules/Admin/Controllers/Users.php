@@ -228,6 +228,72 @@ class Users extends BaseController
         return view('form', $this->data);
     }
 
+    public function profile_form()
+    {
+        $this->permEdit or exit();
+        $data = $this->model->find(user_id());
+        if (!$data) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+
+        $form = [
+            [
+                'id'                    => 'id',
+                'type'                  => 'hidden',
+                'value'                 => ($data) ? $data->id : '',
+            ],
+            [
+                'id'                    => 'nama_lengkap',
+                'value'                 => ($data) ? $data->nama_lengkap : '',
+                'label'                 => lang('Users.fullname'),
+                'required'              => 'required',
+            ],
+            [
+                'id'                    => 'email',
+                'value'                 => ($data) ? $data->email : '',
+                'label'                 => lang('Users.email'),
+                'required'              => 'required',
+            ],
+            [
+                'id'                    => 'image',
+                'value'                 => ($data) ? $data->image : '',
+                'label'                 => lang('Users.image'),
+                'type'                  => 'image',
+            ],
+            [
+                'id'                    => 'username',
+                'value'                 => ($data) ? $data->username : '',
+                'label'                 => lang('Users.username'),
+                'required'              => 'required',
+            ],
+            
+            [
+                'id'                    => 'password',
+                'value'                 => '',
+                'label'                 => lang('Users.password'),
+                'type'                  => 'password'
+            ],
+            [
+                'type'                  => 'submit',
+                'label'                 => lang('Common.btn.save_w_icon'),
+                'form_control_class'    => 'col-md-5',
+                'back_url'              => $this->data['module_url'],
+                'back_label'            => lang('Common.cancel'),
+                'input_container_class' => 'form-group row text-right'
+            ]
+        ];
+
+        $form_builder = new FormBuilder();
+        $this->data['form'] = [
+            'action' => route_to('user_profile_save'),
+            'build'  => $form_builder->build_form_horizontal($form),
+        ];
+        $this->data['data'] = $data;
+        $this->data['title'] = lang('Users.edit_profile');
+        $this->data['heading'] = $this->data['title'];
+        return view('form', $this->data);
+    }
+
     public function save()
     {
         $this->request->isAJAX() or exit();
@@ -326,6 +392,83 @@ class Users extends BaseController
                 'message'  => sprintf(lang('Common.saved.success'), lang('Common.user') . ' ' . $postData['nama_lengkap']),
                 'status'   => 'success',
                 'redirect' => route_to('users')
+            ];
+        } while (0);
+        if (isset($return['redirect'])) {
+            $this->session->setFlashdata('form_response_status', $return['status']);
+            $this->session->setFlashdata('form_response_message', $return['message']);
+        }
+        echo json_encode($return);
+    }
+
+    public function profile_save()
+    {
+        $this->request->isAJAX() or exit();
+
+        $rules = [
+            'nama_lengkap'      => [
+                'label' => lang('Users.nama_lengkap'),
+                'rules' => 'required'
+            ],
+            'email'      => [
+                'label' => lang('Users.email'),
+                'rules' => 'required'
+            ],
+            'username' => [
+                'label' => lang('Users.username'),
+                'rules' => 'required',
+            ],
+        ];
+        $return['status'] = 'error';
+
+        do {
+
+            $postData = $this->request->getPost();
+            $data = $this->model->find($postData['id']);
+            $rules['username']['rules'] = 'is_unique[users.username,username,' . $data->username . ']';
+
+            if (!$this->validate($rules)) {
+                $return['message'] = $this->validator->listErrors('default');
+                break;
+            }
+
+            $this->model->where('email', $postData['email']);
+            if ($postData['id']) {
+                $this->model->where('id !=', $postData['id']);
+            }
+
+            $emailCheck = $this->model->first();
+            if ($emailCheck) {
+                $return['message'] = lang('Users.email_existing');
+                break;
+            }
+
+            if ($postData['password']) {
+                $postData['password_hash'] = $this->_set_password($postData['password']);
+            }
+
+            $image = $this->request->getFile('upload_image');
+            $cld = new UploadApi();
+            if ($image) {
+                if ($image->isValid()) {
+                    $upload = $cld->upload($image->getRealPath(), ['folder' => 'pt-tekpak-indonesia/users']);
+                    $postData['image'] = $upload['public_id'];
+                }
+            } else {
+                if ($image = $this->model->find($postData['id'])) {
+                    $postData['image'] = $image->image;
+                    if ($image->image) {
+                        if (isset($postData['delete_image']) && $postData['delete_image'] === '1') {
+                            $postData['image'] = NULL;
+                        }
+                    }
+                }
+            }
+            $this->model->update($postData['id'], $postData);
+            $return = [
+                'message'  => sprintf(lang('Common.saved.success'), lang('Common.user') . ' ' . $postData['nama_lengkap']),
+                'status'   => 'success',
+                'redirect' => route_to('user_profile_form')
             ];
         } while (0);
         if (isset($return['redirect'])) {

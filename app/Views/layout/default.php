@@ -68,15 +68,15 @@
             <li class="dropdown dropdown-user nav-item">
               <a class="dropdown-toggle nav-link dropdown-user-link" href="#" data-toggle="dropdown">
                 <span class="mr-1 user-name text-bold-700"><?php echo $user->nama_lengkap ?></span>
-                <?php $avatar = $user->image; ?>
+                <?php $cld = new \Cloudinary\Cloudinary(CLD_CONFIG) ?>
                 <span class="avatar avatar-online">
-                  <div class="rounded-circle" style="width:36px; height:36px; background-image: url(<?php echo $avatar ?? "https://via.placeholder.com/30x30" ?>); background-size:cover; background-position:center"></div>
+                  <div class="rounded-circle" style="width:36px; height:36px; background-image: url(<?php echo $user->image ? $cld->image($user->image) : "https://via.placeholder.com/30x30" ?>); background-size:cover; background-position:center"></div>
                   <i></i>
                 </span>
               </a>
               <div class="dropdown-menu dropdown-menu-right">
-                <!-- <a class="dropdown-item" href="user-profile.html"><i class="ft-user"></i> Edit Profile</a> -->
-                <!-- <div class="dropdown-divider"></div> -->
+                <a class="dropdown-item" href="<?= route_to('user_profile_form') ?>"><i class="ft-user"></i> Edit Profile</a>
+                <div class="dropdown-divider"></div>
                 <a class="dropdown-item logout" href="javascript:void(0)"><i class="ft-power"></i> Logout</a>
               </div>
             </li>
@@ -100,17 +100,6 @@
             </li>
           <?php endif; ?>
         <?php endif; ?>
-        <!-- <?php //if (in_groups('hrd')) : ?>
-          <li class="navigation-header"><span><?php //echo lang('Common.hrd_module') ?></span></li>
-          <?php //if (has_permission('user/account')) : ?>
-            <li <?php //echo $module == "user" && $menu == 'user_account' ?  'class="active"' : '' ?>>
-              <a href="<?php //echo route_to('user_accounts') ?>">
-                <i class="la la-user-plus"></i>
-                <span class="menu-title"><?php //echo lang('Common.employees') ?></span>
-              </a>
-            </li>
-          <?php //endif; ?> -->
-        <?php //endif; ?>
         <?php if (in_groups('hrd')) : ?>
           <li class="navigation-header"><span><?php echo lang('Common.administration') ?></span></li>
           <?php if (has_permission('job_vacancy')) : ?>

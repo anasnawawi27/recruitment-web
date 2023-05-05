@@ -13,4 +13,6 @@ return [
     'active'            => 'Active',
     'not_active'        => 'Nonactive',
     'password'          => 'Password',
+    'edit_profile'      => 'Edit Profile',
+    'email_existing'    => 'Email Sudah Terdaftar'
 ];

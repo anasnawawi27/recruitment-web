@@ -139,7 +139,7 @@
 				</span>
 			</a>
 			<div class="dropdown-menu dropdown-menu-right">
-				<a class="dropdown-item" href="user-profile.html">
+				<a class="dropdown-item" href="<?= route_to('profile') ?>">
 					<i class="ft-user"></i> Edit Profile
 				</a>
 			  	<div class="dropdown-divider"></div>
@@ -167,7 +167,7 @@
 		<li class="dropdown nav-item <?= $menu == 'home' ? 'active' : ''?>">
 			<a class="dropdown-toggle nav-link" href="<?= base_url('/') ?>">
 				<i class="la la-home"></i>
-				<span data-i18n="Lowongan">Home</span>
+				<span data-i18n="Tentang Kami">Tentang Kami</span>
 			</a>
 		</li>
 		<li class="dropdown nav-item <?= $menu == 'vacancies' ? 'active' : ''?>">
@@ -177,12 +177,20 @@
 			</a>
 		</li>
 		<?php if(logged_in()) : ?>
-			<li class="dropdown nav-item <?= $menu == 'applications' ? 'active' : ''?>">
+		<li class="dropdown nav-item <?= $menu == 'applications' ? 'active' : ''?>">
 			<a class="dropdown-toggle nav-link" href="<?= route_to('job_applications') ?>">
 				<i class="la la-briefcase"></i>
 				<span data-i18n="Lamaran Kerja">Lamaran Kerja</span>
 			</a>
 		</li>
+		<?php if(in_groups('applicant')) : ?>
+		<li class="dropdown nav-item <?= $menu == 'profile' ? 'active' : ''?>">
+			<a class="dropdown-toggle nav-link" href="<?= route_to('profile') ?>">
+				<i class="la la-user"></i>
+				<span data-i18n="Profile">Data Diri</span>
+			</a>
+		</li>
+		<?php endif ?>
 	  	<?php endif ?>
 	</ul>
   </div>

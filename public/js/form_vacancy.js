@@ -44,6 +44,14 @@ $(".is-online").on("click", function () {
   }
 });
 
+$(".syarat-gender").on("click", function () {
+  if ($(this).is(":checked")) {
+    $(".gender").removeClass("d-none");
+  } else {
+    $(".gender").addClass("d-none");
+  }
+});
+
 $(".tag").tagsinput();
 
 let elem = $(".switchery");
