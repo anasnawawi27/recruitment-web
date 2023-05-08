@@ -165,6 +165,17 @@
             </li>
           <?php endif; ?>
         <?php endif; ?>
+        <?php if(in_groups('hrd')) : ?>
+          <li class="navigation-header"><span><?php echo lang('Common.report_section') ?></span></li>
+          <?php if(has_permission('report')) : ?>
+          <li <?php echo $module == "reports" && $menu == 'report' ?  'class="active"' : '' ?>>
+            <a href="<?php echo route_to('reports') ?>">
+              <i class="la la-book"></i>
+              <span class="menu-title"><?php echo lang('Common.report') ?></span>
+            </a>
+          </li>
+          <?php endif ?>
+        <?php endif ?>
       </ul>
     </div>
   </div>
@@ -182,38 +193,6 @@
   <div class="modal fade" id="modal-psikotest" data-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
-      </div>
-    </div>
-  </div>
-
-  <div class="modal fade" id="modal" data-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title" id="myModalLabel2"><i class="la la-road2"></i> Edit Payroll</h4>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <form action="" id="form-edit-payroll">
-          <div class="modal-body">
-            <input type="hidden" id="index" name="index">
-            <div class="form-group row d-flex align-items-center">
-              <label class="col-md-4 label-control">Other Deduction</label>
-              <div class="col-md-8 mx-auto">
-                <input type="number" class="form-control" name="other_deduction" id="other-deduction">
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-warning mr-1" data-dismiss="modal">
-              <i class="ft-x"></i> Cancel
-            </button>
-            <button type="button" class="btn btn-primary" id="edit-payroll">
-              <i class="la la-check-square-o"></i> Save
-            </button>
-          </div>
-        </form>
       </div>
     </div>
   </div>

@@ -6,6 +6,7 @@ return [
     'edit_heading'      => 'Edit User',
     'fullname'          => 'Nama Lengkap',
     'email'             => 'Email',
+    'nik'               => 'NIK',
     'image'             => 'Profile Image',
     'username'          => 'Username',
     'role'              => 'Role',

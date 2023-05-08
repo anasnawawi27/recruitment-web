@@ -52,6 +52,14 @@ $(".syarat-gender").on("click", function () {
   }
 });
 
+$(".syarat-umur").on("click", function () {
+  if ($(this).is(":checked")) {
+    $(".umur").removeClass("d-none");
+  } else {
+    $(".umur").addClass("d-none");
+  }
+});
+
 $(".tag").tagsinput();
 
 let elem = $(".switchery");

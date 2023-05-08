@@ -181,7 +181,7 @@ class JobVacancies extends BaseController
         ];
 
         $return['status'] = 'error';
-
+        
         do {
             if (!$this->validate($rules)) {
                 $return['message'] = $this->validator->listErrors('bootstrap_list');
@@ -246,6 +246,10 @@ class JobVacancies extends BaseController
             $psikotestModel = new \App\Models\PsikotestModel();
 
             $qualifikasi = [];
+
+            if(isset($postData['syarat_umur'])){
+                $qualifikasi['syarat_umur'] = $postData['age'];
+            }
 
             if(isset($postData['syarat_gender'])){
                 $qualifikasi['syarat_gender'] = $postData['gender'];

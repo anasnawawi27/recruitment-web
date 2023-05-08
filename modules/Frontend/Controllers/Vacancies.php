@@ -78,9 +78,19 @@ class Vacancies extends BaseController
                 }
 
                 $not_passed = [];
+                $user = $this->data['user'];
+
+                if (array_key_exists('syarat_umur', $qualifikasi)) {
+                    $birthday = date_create($user->tanggal_lahir);
+                    $now = date_create(date('Y-m-d'));
+                    $age = date_diff($birthday,$now)->format('%y');
+
+                    if($age > $qualifikasi['syarat_umur']){
+                        $not_passed[] = true;
+                    }
+                }
 
                 if (array_key_exists('syarat_gender', $qualifikasi)) {
-                    $user = $this->data['user'];
                     if($user->jenis_kelamin !== $qualifikasi['syarat_gender']){
                         $not_passed[] = true;
                     }

@@ -15,6 +15,7 @@ class ApplicantsModel extends Model
         'tanggal_lahir',
         'tempat_lahir',
         'email',
+        'nik',
         'no_handphone_1',
         'no_handphone_2',
         'ktp',

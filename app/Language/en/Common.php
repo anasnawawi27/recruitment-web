@@ -93,4 +93,9 @@ return [
 
     'profile'           => 'Profile',
     'about'             => 'Tentang Kami',
+
+    'report_section'    => 'Report',
+    'report'            => 'Laporan',
+    'select_date'       => 'Pilih Tanggal',
+    'apply'             => 'Terapkan'
 ];

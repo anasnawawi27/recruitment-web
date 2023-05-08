@@ -1,5 +1,6 @@
 <?php $this->extend('layout/default2') ?>
 <?php $this->section('content')?>
+<?php use CodeIgniter\I18n\Time; ?>
 <div class="row">
     <?php
     $current_date = date('Y-m-d');
@@ -16,6 +17,8 @@
                             <h4 class="font-weight-bold mb-0"><?= $data->posisi ?></h4>
                             <hr>
                             <?= $data->deskripsi ?>
+
+                            <h6 class="my-2 text-italic">*Lowongan dibuka sampai tanggal :  <?= Time::parse($data->batas_tanggal)->toLocalizedString('d MMMM yyyy'); ?></h6>
                             <div class="d-flex">
                                 <a href="<?= base_url('vacancy/apply/' . $data->id) ?>" class="btn btn-info btn-icon mr-1 btn-block">
                                     <i class="la la-file-text"></i>    

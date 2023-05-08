@@ -62,5 +62,11 @@ $routes->group('admin', ['namespace' => '\Modules\Admin\Controllers'], function 
         $routes->add('save', 'Permissions::save', ['as' => 'permission_save']);
         $routes->add('delete/(:any)', 'Permissions::delete/$1', ['as' => 'permission_delete']);
     });
+
+    $routes->group('report', function ($routes) {
+        $routes->add('/', 'Reports::index', ['as' => 'reports']);
+        $routes->add('pdf', 'Reports::pdf', ['as' => 'report_pdf']);
+        $routes->add('get_report_data', 'Reports::get_report_data', ['as' => 'get_report_data']);
+    });
 });
 

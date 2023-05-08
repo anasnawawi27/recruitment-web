@@ -10,6 +10,7 @@ use \App\Libraries\FormBuilder;
 use Cloudinary\Cloudinary;
 use Cloudinary\Api\Upload\UploadApi;
 use Myth\Auth\Models\UserModel;
+use Irsyadulibad\NIKValidator\Validator;
 
 class Applicants extends BaseController
 {
@@ -67,23 +68,29 @@ class Applicants extends BaseController
                     'switchable' => 'false'
                 ],
                 [
+                    'title'  => lang('Users.nik'),
+                    'field'     => 'nik',
+                    'sortable'  => 'true',
+                    'switchable' => 'false'
+                ],
+                [
                     'title'  => lang('Users.email'),
                     'field'     => 'email',
                     'sortable'  => 'true',
                     'switchable' => 'false'
                 ],
-                [
-                    'title'  => lang('Applicants.phone_1'),
-                    'field'     => 'no_handphone_1',
-                    'sortable'  => 'true',
-                    'switchable' => 'false'
-                ],
-                [
-                    'title'  => lang('Applicants.phone_2'),
-                    'field'     => 'no_handphone_2',
-                    'sortable'  => 'true',
-                    'switchable' => 'false'
-                ],
+                // [
+                //     'title'  => lang('Applicants.phone_1'),
+                //     'field'     => 'no_handphone_1',
+                //     'sortable'  => 'true',
+                //     'switchable' => 'false'
+                // ],
+                // [
+                //     'title'  => lang('Applicants.phone_2'),
+                //     'field'     => 'no_handphone_2',
+                //     'sortable'  => 'true',
+                //     'switchable' => 'false'
+                // ],
             ],
             'url'       => route_to('applicant_list'),
             'cookie_id' => 'table-applicant'
@@ -129,7 +136,7 @@ class Applicants extends BaseController
         }
         $table->setLimit($getData['offset'], $getData['limit']);
         $table->setFilter($filter);
-        $table->setSelect("a.id, a.nama_lengkap, a.jenis_kelamin, a.tanggal_lahir, a.tempat_lahir, a.no_handphone_1, a.no_handphone_2, a.email, '" . route_to('applicant_detail', 'ID') . "' AS detail, '" . ($this->permEdit ? route_to('applicant_form', 'ID') : '') . "' AS `edit`, '" . ($this->permDelete ? route_to('applicant_delete', 'ID') : '') . "' AS `delete`");
+        $table->setSelect("a.id, a.nama_lengkap, a.jenis_kelamin, a.tanggal_lahir, a.tempat_lahir, a.no_handphone_1, a.no_handphone_2, a.email, a.nik, '" . route_to('applicant_detail', 'ID') . "' AS detail, '" . ($this->permEdit ? route_to('applicant_form', 'ID') : '') . "' AS `edit`, '" . ($this->permDelete ? route_to('applicant_delete', 'ID') : '') . "' AS `delete`");
         $output['rows'] = $table->getAll();
         $output['total'] = $table->countAll();
         $table->setFilter();
@@ -225,6 +232,13 @@ class Applicants extends BaseController
                 'value'    => ($data) ? $data->tanggal_lahir : '',
                 'label'    => lang('Applicants.birthdate'),
                 'type'     => 'date'
+            ],
+            [
+                'id'       => 'nik',
+                'value'    => ($data) ? $data->nik : '',
+                'label'    => lang('Users.nik'),
+                'type'     => 'number',
+                'required' => 'required',
             ],
             [
                 'id'       => 'email',
@@ -413,6 +427,12 @@ class Applicants extends BaseController
             $groupModel = new \Myth\Auth\Authorization\GroupModel();
 
             $postData = $this->request->getPost();
+
+            $parsed = Validator::set($postData['nik'])->parse();
+            if(!$parsed->valid) {
+                $return['message'] = 'NIK Tidak Valid';
+                break;
+            }
 
             if (!$postData['id']) {
                 $rules['password'] = [

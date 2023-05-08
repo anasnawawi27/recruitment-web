@@ -149,7 +149,7 @@
 			</div>
 		  </li>
 		  <?php else : ?>
-			<a href="<?= route_to('register') ?>" class="btn btn-outline-success btn-min-width mr-1">Daftar</a>
+			<a href="<?= route_to('register') ?>" class="btn btn-outline-success btn-min-width mr-1">Registrasi</a>
 			<a href="<?= route_to('login') ?>" class="btn btn-success btn-min-width mr-1">Login</a>
 		  <?php endif ?>
 		</ul>

@@ -2,8 +2,8 @@
 
 return [
     'heading'       => 'User Permission',
-    'name'          => 'Permission Name',
-    'description'   => 'Description',
-    'add_heading'   => 'Tambah New Permission',
-    'edit_heading'  => 'Edit Permissions',
+    'name'          => 'Nama Permission',
+    'description'   => 'Deskripsi',
+    'add_heading'   => 'Tambah Permission',
+    'edit_heading'  => 'Edit Permission',
 ];

@@ -5,6 +5,7 @@ namespace Modules\Auth\Controllers;
 use \App\Controllers\BaseController;
 use App\Models\UsersModel;
 use Cloudinary\Api\Upload\UploadApi;
+use Irsyadulibad\NIKValidator\Validator;
 
 class Auth extends BaseController
 {
@@ -95,6 +96,12 @@ class Auth extends BaseController
             do {
                 if (!$this->validate($rules)) {
                     $return['message'] = $this->validator->listErrors('bootstrap_list');
+                    break;
+                }
+
+                $parsed = Validator::set($postData['nik'])->parse();
+                if(!$parsed->valid) {
+                    $return['message'] = alert_message('danger', 'NIK Tidak Valid');
                     break;
                 }
 

@@ -59,6 +59,12 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
+                                <label for="nik"><?= lang('Auth.nik') ?></label>
+                                <input type="number" id="nik" class="form-control" name="nik">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
                                 <label for="email"><?= lang('Auth.email') ?></label>
                                 <input type="text" id="email" class="form-control" name="email">
                             </div>

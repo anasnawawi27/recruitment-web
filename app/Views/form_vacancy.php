@@ -75,6 +75,8 @@
         </div>
         <?php
             $qualifikasi = $data && $data->qualifikasi ? json_decode($data->qualifikasi) : NULL;
+
+            $syarat_umur = NULL;
             $syarat_gender = NULL;
             $syarat_jurusan = NULL;
             $minimum_nilai = NULL;
@@ -82,6 +84,7 @@
             $berpengalaman = false;
             
             if($qualifikasi){
+                $syarat_umur = isset($qualifikasi->syarat_umur) ? $qualifikasi->syarat_umur : NULL;
                 $syarat_gender = isset($qualifikasi->syarat_gender) ? $qualifikasi->syarat_gender : NULL;
                 $syarat_jurusan = isset($qualifikasi->syarat_jurusan) ? implode(',', json_decode($qualifikasi->syarat_jurusan, true)) : NULL;
                 $minimum_nilai = isset($qualifikasi->minimum_nilai) ? $qualifikasi->minimum_nilai : NULL;
@@ -89,6 +92,21 @@
                 $berpengalaman = isset($qualifikasi->berpengalaman) ? $qualifikasi->berpengalaman : false;
             };
         ?>
+        <div class="form-group row">
+            <label for="syarat-umur" class="col-form-label col-md-2 col-sm-4"></label>
+            <div class="col-md-5">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input syarat-umur" <?= $qualifikasi && $syarat_umur ? 'checked' : '' ?> name="syarat_umur" value="1" id="age-qualification">
+                    <label class="custom-control-label" for="age-qualification">Syarat Umur</label>
+                  </div>
+            </div>
+        </div>
+        <div class="form-group row umur <?= $qualifikasi && $syarat_umur ? '' : 'd-none' ?>">
+            <label for="age" class="col-form-label col-md-2 col-sm-4"></label>
+            <div class="col-md-5">
+                <input type="number" class="form-control" name="age" value="<?= $qualifikasi && $syarat_umur ? $syarat_umur : '' ?>">
+            </div>
+        </div>
         <div class="form-group row">
             <label for="syarat-gender" class="col-form-label col-md-2 col-sm-4"></label>
             <div class="col-md-5">
