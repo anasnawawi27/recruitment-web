@@ -26,7 +26,7 @@
                       <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size: 0px; text-align: left; direction: ltr; display: inline-block; vertical-align: top; width: 100%;">
                         <table style="vertical-align: top;" border="0" width="100%" cellspacing="0" cellpadding="0">
                           <tbody>
-                            <tr style="background: #transparent; background-color: transparent; vertical-align: top;">
+                            <tr style="background: transparent; background-color: transparent; vertical-align: top;">
                               <td style="font-size: 0px; padding: 10px 25px; word-break: break-word;" align="left" width="50%">
                                 <div style="font-family: Arial, sans-serif; font-size: 20px; line-height: 28px; text-align: left; color: #ffffff;">
                                   <img height="70" src="https://tekpakgroup.com/wp-content/uploads/2021/12/Tekpak.png">
